@@ -19,7 +19,7 @@ export default function LoginPage() {
 
         try {
             const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
-            alert(`Connecting to: ${apiUrl}`); // Debugging line
+            // alert(`Connecting to: ${apiUrl}`); // Removed debug alert
             const response = await axios.post(`${apiUrl}/auth/login`, {
                 email,
                 password,
@@ -34,7 +34,9 @@ export default function LoginPage() {
                 router.push('/dashboard');
             }
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+            console.error('Login error:', err);
+            const errorMessage = err.response?.data?.message || err.message || 'Login failed. Please check your credentials.';
+            setError(`Error: ${errorMessage}`);
         } finally {
             setLoading(false);
         }
