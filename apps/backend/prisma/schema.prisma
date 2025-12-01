@@ -1,0 +1,290 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STORE_MANAGER
+  TECHNICIAN
+  CASHIER
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_FOR_PARTS
+  COMPLETED
+  CLOSED
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(CASHIER)
+  branch    String?
+  gstin     String?
+  state     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  sales     Sale[]
+  tickets   ServiceTicket[]
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String
+  email     String?
+  address   String?
+  gstin     String?
+  state     String?
+  createdAt DateTime @default(now())
+  
+  sales     Sale[]
+  tickets   ServiceTicket[]
+}
+
+model Product {
+  id             Int      @id @default(autoincrement())
+  sku            String   @unique
+  name           String
+  description    String?
+  category       String?
+  price          Decimal  @db.Decimal(10, 2)
+  costPrice      Decimal  @db.Decimal(10, 2)
+  stockQuantity  Int      @default(0)
+  lowStockThreshold Int   @default(5)
+  hsnCode        String?
+  gstRate        Decimal  @default(0) @db.Decimal(5, 2)
+  imageUrl       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  saleItems      SaleItem[]
+  ticketParts    TicketPart[]
+  purchaseItems  PurchaseOrderItem[]
+  warrantyMonths Int      @default(0) // 0 means no warranty
+
+  branchStocks   BranchStock[]
+  stockTransfers StockTransfer[]
+}
+
+model Sale {
+  id          Int      @id @default(autoincrement())
+  invoiceNo   String   @unique
+  subTotal    Decimal  @default(0) @db.Decimal(10, 2)
+  cgst        Decimal  @default(0) @db.Decimal(10, 2)
+  sgst        Decimal  @default(0) @db.Decimal(10, 2)
+  igst        Decimal  @default(0) @db.Decimal(10, 2)
+  totalAmount Decimal  @db.Decimal(10, 2)
+  paymentMethod String // CASH, CARD, UPI, etc.
+  createdAt   DateTime @default(now())
+  
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  
+  customerId  Int?
+  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  
+  items       SaleItem[]
+}
+
+model SaleItem {
+  id        Int      @id @default(autoincrement())
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  
+  saleId    Int
+  sale      Sale     @relation(fields: [saleId], references: [id])
+  
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+
+  warrantyClaims WarrantyClaim[]
+}
+
+model ServiceTicket {
+  id          Int      @id @default(autoincrement())
+  description String
+  status      TicketStatus @default(OPEN)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  customerId  Int
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  technicianId Int?
+  technician   User?    @relation(fields: [technicianId], references: [id])
+  
+  parts       TicketPart[]
+}
+
+model TicketPart {
+  id        Int      @id @default(autoincrement())
+  quantity  Int
+  
+  ticketId  Int
+  ticket    ServiceTicket @relation(fields: [ticketId], references: [id])
+  
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  CONVERTED
+  CLOSED
+}
+
+model Enquiry {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  message   String
+  status    EnquiryStatus @default(NEW)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Supplier {
+  id        Int      @id @default(autoincrement())
+  name      String
+  contactPerson String?
+  email     String?
+  phone     String?
+  address   String?
+  gstin     String?
+  state     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  ORDERED
+  RECEIVED
+  CANCELLED
+}
+
+model PurchaseOrder {
+  id          Int      @id @default(autoincrement())
+  poNumber    String   @unique
+  status      PurchaseOrderStatus @default(DRAFT)
+  subTotal    Decimal  @default(0) @db.Decimal(10, 2)
+  cgst        Decimal  @default(0) @db.Decimal(10, 2)
+  sgst        Decimal  @default(0) @db.Decimal(10, 2)
+  igst        Decimal  @default(0) @db.Decimal(10, 2)
+  totalAmount Decimal  @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  supplierId  Int
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+
+  items       PurchaseOrderItem[]
+}
+
+model PurchaseOrderItem {
+  id        Int      @id @default(autoincrement())
+  quantity  Int
+  unitCost  Decimal  @db.Decimal(10, 2)
+
+  purchaseOrderId Int
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+enum WarrantyStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+model WarrantyClaim {
+  id          Int      @id @default(autoincrement())
+  description String
+  status      WarrantyStatus @default(PENDING)
+  resolution  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  saleItemId  Int
+  saleItem    SaleItem @relation(fields: [saleItemId], references: [id])
+}
+
+// GST Compliance Additions
+model GSTConfig {
+  id          Int      @id @default(autoincrement())
+  gstin       String?
+  state       String?  // Business State for tax calculation
+  updatedAt   DateTime @updatedAt
+}
+
+model Branch {
+  id            Int      @id @default(autoincrement())
+  name          String
+  location      String
+  contactPerson String?
+  phone         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  stocks        BranchStock[]
+  sourceTransfers StockTransfer[] @relation("SourceBranch")
+  targetTransfers StockTransfer[] @relation("TargetBranch")
+}
+
+model BranchStock {
+  id        Int      @id @default(autoincrement())
+  quantity  Int      @default(0)
+  
+  branchId  Int
+  branch    Branch   @relation(fields: [branchId], references: [id])
+  
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@unique([branchId, productId])
+}
+
+enum TransferStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+model StockTransfer {
+  id             Int      @id @default(autoincrement())
+  quantity       Int
+  status         TransferStatus @default(COMPLETED) // Immediate transfer for now
+  createdAt      DateTime @default(now())
+  
+  productId      Int
+  product        Product  @relation(fields: [productId], references: [id])
+
+  // Null source/target means Main Warehouse
+  sourceBranchId Int?
+  sourceBranch   Branch?  @relation("SourceBranch", fields: [sourceBranchId], references: [id])
+  
+  targetBranchId Int?
+  targetBranch   Branch?  @relation("TargetBranch", fields: [targetBranchId], references: [id])
+}

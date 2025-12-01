@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: hisecure_postgres
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hisecure_erp
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hisecure_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d hisecure_erp" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    container_name: hisecure_backend
+    ports:
+      - "3005:3000"
+    environment:
+      DATABASE_URL: postgres://admin:password@postgres:5432/hisecure_erp
+      JWT_SECRET: supersecretkey
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - hisecure_network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: hisecure_web
+    ports:
+      - "3006:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3005
+    depends_on:
+      - backend
+    networks:
+      - hisecure_network
+
+networks:
+  hisecure_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

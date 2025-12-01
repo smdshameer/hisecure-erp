@@ -1,0 +1,23 @@
+{
+  "name": "hisecure-erp",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:backend": "npm run start:dev -w apps/backend",
+    "dev:web": "npm run dev -w apps/web",
+    "build:backend": "npm run build -w apps/backend",
+    "build:web": "npm run build -w apps/web",
+    "test:backend": "npm run test -w apps/backend",
+    "test:web": "npm run test -w apps/web"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "prisma": "^5.10.2"
+  },
+  "dependencies": {
+    "axios": "^1.13.2"
+  }
+}

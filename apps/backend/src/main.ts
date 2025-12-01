@@ -1,0 +1,30 @@
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as path from 'path';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.enableCors();
+  app.useGlobalPipes(new ValidationPipe());
+
+  // Serve static files from 'uploads' directory
+  app.useStaticAssets(path.join(process.cwd(), 'uploads'), {
+    prefix: '/uploads/',
+  });
+
+  // Swagger Configuration
+  const config = new DocumentBuilder()
+    .setTitle('Hi Secure ERP API')
+    .setDescription('The Hi Secure Solutions ERP API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  await app.listen(3000);
+}
+bootstrap();
