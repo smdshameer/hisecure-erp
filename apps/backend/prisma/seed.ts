@@ -18,6 +18,18 @@ async function main() {
         },
     });
 
+    // Create Admin
+    const admin = await prisma.user.upsert({
+        where: { email: 'admin@hisecure.com' },
+        update: {},
+        create: {
+            email: 'admin@hisecure.com',
+            name: 'Admin User',
+            password: await bcrypt.hash('admin123', 10),
+            role: Role.ADMIN,
+        },
+    });
+
     // Create Tech
     const tech = await prisma.user.upsert({
         where: { email: 'tech@hisecure.com' },
