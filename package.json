@@ -7,11 +7,11 @@
   ],
   "scripts": {
     "dev:backend": "npm run start:dev -w apps/backend",
-    "dev:web": "npm run dev -w apps/web",
+    "dev:web": "npm run dev -w apps/frontend",
     "build:backend": "npm run build -w apps/backend",
-    "build:web": "npm run build -w apps/web",
+    "build:web": "npm run build -w apps/frontend",
     "test:backend": "npm run test -w apps/backend",
-    "test:web": "npm run test -w apps/web"
+    "test:web": "npm run test -w apps/frontend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
