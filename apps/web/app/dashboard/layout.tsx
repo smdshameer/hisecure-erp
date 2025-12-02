@@ -1,4 +1,8 @@
+'use client';
+
 import Sidebar from '../../components/Sidebar';
+import styles from './layout.module.css';
+import { SidebarProvider } from '../../context/SidebarContext';
 
 export default function DashboardLayout({
     children,
@@ -6,11 +10,13 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div style={{ display: 'flex' }}>
-            <Sidebar />
-            <main style={{ flex: 1, marginLeft: '250px', minHeight: '100vh', background: 'var(--primary-color)' }}>
-                {children}
-            </main>
-        </div>
+        <SidebarProvider>
+            <div className={styles.container}>
+                <Sidebar />
+                <main className={styles.main}>
+                    {children}
+                </main>
+            </div>
+        </SidebarProvider>
     );
 }
