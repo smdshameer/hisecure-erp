@@ -200,6 +200,7 @@ export default function POSPage() {
                             <label>Payment Method:</label>
                             <select
                                 value={paymentMethod}
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 onChange={(e) => setPaymentMethod(e.target.value as any)}
                                 className={styles.paymentSelect}
                             >

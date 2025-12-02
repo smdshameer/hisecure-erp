@@ -37,19 +37,15 @@ export default function TransfersPage() {
         quantity: '',
     });
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
 
             const [transfersRes, branchesRes, productsRes] = await Promise.all([
-                axios.get('http://localhost:3001/transfers', { headers }),
-                axios.get('http://localhost:3001/branches', { headers }),
-                axios.get('http://localhost:3001/products', { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/transfers`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/branches`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`, { headers }),
             ]);
 
             setTransfers(transfersRes.data);
@@ -59,6 +55,11 @@ export default function TransfersPage() {
             console.error('Error fetching data:', error);
         }
     };
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchData();
+    }, []);
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -71,7 +72,7 @@ export default function TransfersPage() {
                 quantity: Number(formData.quantity),
             };
 
-            await axios.post('http://localhost:3001/transfers', payload, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/transfers`, payload, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

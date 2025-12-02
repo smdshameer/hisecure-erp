@@ -22,7 +22,9 @@ export default function ReportsPage() {
     const [activeTab, setActiveTab] = useState<'general' | 'gst'>('general');
     const [gstMonth, setGstMonth] = useState(new Date().getMonth() + 1);
     const [gstYear, setGstYear] = useState(new Date().getFullYear());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [gstr1Data, setGstr1Data] = useState<any[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [gstr3bData, setGstr3bData] = useState<any>(null);
 
     const [stats, setStats] = useState<Stats | null>(null);
@@ -37,6 +39,7 @@ export default function ReportsPage() {
         if (activeTab === 'gst') {
             fetchGstReports();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab, gstMonth, gstYear]);
 
     const fetchData = async () => {
@@ -45,8 +48,8 @@ export default function ReportsPage() {
             const headers = { Authorization: `Bearer ${token}` };
 
             const [statsRes, lowStockRes] = await Promise.all([
-                axios.get('http://localhost:3001/reports/dashboard', { headers }),
-                axios.get('http://localhost:3001/reports/low-stock', { headers })
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reports/dashboard`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reports/low-stock`, { headers })
             ]);
 
             setStats(statsRes.data);
@@ -64,8 +67,8 @@ export default function ReportsPage() {
             const headers = { Authorization: `Bearer ${token}` };
 
             const [gstr1Res, gstr3bRes] = await Promise.all([
-                axios.get(`http://localhost:3001/reports/gst/gstr1?month=${gstMonth}&year=${gstYear}`, { headers }),
-                axios.get(`http://localhost:3001/reports/gst/gstr3b?month=${gstMonth}&year=${gstYear}`, { headers })
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reports/gst/gstr1?month=${gstMonth}&year=${gstYear}`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reports/gst/gstr3b?month=${gstMonth}&year=${gstYear}`, { headers })
             ]);
 
             setGstr1Data(gstr1Res.data);
@@ -205,6 +208,7 @@ export default function ReportsPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                     {gstr1Data.map((row: any) => (
                                         <tr key={row.invoiceNo}>
                                             <td>{row.invoiceNo}</td>

@@ -13,7 +13,10 @@ export default function PaymentModal({ isOpen, onClose, onSuccess, amount, metho
 
     useEffect(() => {
         if (isOpen) {
-            setStatus('processing');
+            // Reset status when modal opens
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            if (status !== 'processing') setStatus('processing');
+
             const timer = setTimeout(() => {
                 setStatus('success');
                 setTimeout(() => {

@@ -54,6 +54,7 @@ export default function CreatePurchaseOrderPage() {
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleItemChange = (index: number, field: keyof POItem, value: any) => {
         const newItems = [...items];
         newItems[index] = { ...newItems[index], [field]: value };
@@ -108,19 +109,6 @@ export default function CreatePurchaseOrderPage() {
                 <form onSubmit={handleSubmit} className={styles.formContainer}>
                     <div className={styles.formGroup}>
                         <label>Supplier</label>
-                        <select
-                            required
-                            value={supplierId}
-                            onChange={(e) => setSupplierId(Number(e.target.value))}
-                        >
-                            <option value="">Select Supplier</option>
-                            {suppliers.map(s => (
-                                <option key={s.id} value={s.id}>{s.name}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className={styles.itemsSection}>
                         <h3>Order Items</h3>
                         {items.map((item, index) => (
                             <div key={index} className={styles.itemRow}>

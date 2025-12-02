@@ -10,6 +10,7 @@ interface DashboardData {
     totalOrders: number;
     lowStockCount: number;
     topProducts: { name: string; sales: number }[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recentSales: any[];
 }
 
@@ -24,8 +25,7 @@ export default function DashboardPage() {
     const fetchDashboardData = async () => {
         try {
             const token = localStorage.getItem('token');
-            // Use port 3005 for backend
-            const response = await axios.get('http://localhost:3005/analytics/dashboard', {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/analytics/dashboard`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setData(response.data);

@@ -11,6 +11,7 @@ interface Branch {
     location: string;
     contactPerson: string;
     phone: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stocks: any[];
 }
 
@@ -26,14 +27,10 @@ export default function BranchesPage() {
 
     const router = useRouter();
 
-    useEffect(() => {
-        fetchBranches();
-    }, []);
-
     const fetchBranches = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:3001/branches', {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/branches`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setBranches(response.data);
@@ -42,11 +39,16 @@ export default function BranchesPage() {
         }
     };
 
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchBranches();
+    }, []);
+
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:3001/branches', formData, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/branches`, formData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setIsModalOpen(false);

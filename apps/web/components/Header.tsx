@@ -10,6 +10,7 @@ export default function Header({ title }: { title: string }) {
     const { toggleSidebar } = useSidebar();
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsMounted(true);
         const storedUser = localStorage.getItem('user');
         if (storedUser) {

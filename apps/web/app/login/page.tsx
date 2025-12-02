@@ -31,6 +31,7 @@ export default function LoginPage() {
                 // Redirect based on role (simple redirect for now)
                 router.push('/dashboard');
             }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
         } finally {

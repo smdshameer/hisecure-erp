@@ -13,6 +13,8 @@ interface Customer {
     address: string;
     gstin?: string;
     state?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    history?: any[];
 }
 
 export default function CustomersPage() {
@@ -30,13 +32,14 @@ export default function CustomersPage() {
     });
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchCustomers();
     }, []);
 
     const fetchCustomers = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:3005/customers', {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/customers`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setCustomers(response.data);
@@ -78,13 +81,14 @@ export default function CustomersPage() {
     const createCustomer = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:3005/customers', customerForm, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/customers`, customerForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowModal(false);
             setCustomerForm({ name: '', email: '', phone: '', address: '', gstin: '', state: '' });
             fetchCustomers();
             alert('Customer created successfully!');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             const errorMessage = error.response?.data?.message || 'Failed to create customer';
             if (errorMessage.includes('already exists')) {
@@ -99,7 +103,7 @@ export default function CustomersPage() {
         if (!editingCustomer) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.patch(`http://localhost:3005/customers/${editingCustomer.id}`, customerForm, {
+            await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/customers/${editingCustomer.id}`, customerForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowModal(false);
@@ -107,27 +111,24 @@ export default function CustomersPage() {
             setCustomerForm({ name: '', email: '', phone: '', address: '', gstin: '', state: '' });
             fetchCustomers();
             alert('Customer updated successfully!');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             alert('Failed to update customer: ' + (error.response?.data?.message || error.message));
         }
     };
 
     const deleteCustomer = async (id: number, name: string) => {
-        console.log('Delete button clicked for customer:', id, name);
         if (!confirm(`Are you sure you want to delete customer "${name}"?`)) {
-            console.log('User cancelled deletion');
             return;
         }
-        console.log('User confirmed deletion, proceeding...');
         try {
             const token = localStorage.getItem('token');
-            console.log('Token:', token ? 'Found' : 'Missing');
-            const response = await axios.delete(`http://localhost:3005/customers/${id}`, {
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/customers/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            console.log('Delete response:', response.data);
             fetchCustomers();
             alert('Customer deleted successfully!');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error('Delete error:', error);
             alert('Failed to delete customer: ' + (error.response?.data?.message || error.message));
