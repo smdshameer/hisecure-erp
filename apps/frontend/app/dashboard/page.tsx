@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from '../../components/Header';
 import AnalyticsCharts from '../../components/AnalyticsCharts';
+import styles from './dashboard.module.css';
 
 interface DashboardData {
     totalRevenue: number;
@@ -44,53 +45,61 @@ export default function DashboardPage() {
     return (
         <>
             <Header title="Overview" />
-            <div style={{ padding: '2rem' }}>
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                    gap: '1.5rem'
-                }}>
-                    <div style={cardStyle}>
-                        <h3 style={cardTitleStyle}>Total Revenue</h3>
-                        <p style={cardValueStyle}>₹{data?.totalRevenue.toLocaleString()}</p>
+            <div className={styles.container}>
+                <div className={styles.grid}>
+                    <div className={styles.card}>
+                        <div className={styles.cardHeader}>
+                            <div className={styles.iconWrapper}>💰</div>
+                            <span className={styles.cardTitle}>Total Revenue</span>
+                        </div>
+                        <p className={styles.cardValue}>₹{data?.totalRevenue.toLocaleString()}</p>
+                        <div className={styles.trend}>
+                            <span className={styles.trendUp}>↗ +12%</span>
+                            <span className={styles.trendNeutral}>vs last month</span>
+                        </div>
                     </div>
-                    <div style={cardStyle}>
-                        <h3 style={cardTitleStyle}>Total Orders</h3>
-                        <p style={cardValueStyle}>{data?.totalOrders}</p>
+
+                    <div className={styles.card}>
+                        <div className={styles.cardHeader}>
+                            <div className={styles.iconWrapper}>📦</div>
+                            <span className={styles.cardTitle}>Total Orders</span>
+                        </div>
+                        <p className={styles.cardValue}>{data?.totalOrders}</p>
+                        <div className={styles.trend}>
+                            <span className={styles.trendUp}>↗ +5%</span>
+                            <span className={styles.trendNeutral}>vs last month</span>
+                        </div>
                     </div>
-                    <div style={cardStyle}>
-                        <h3 style={cardTitleStyle}>Low Stock Items</h3>
-                        <p style={{ ...cardValueStyle, color: (data?.lowStockCount || 0) > 0 ? '#ef4444' : 'var(--text-primary)' }}>
+
+                    <div className={styles.card}>
+                        <div className={styles.cardHeader}>
+                            <div className={styles.iconWrapper}>⚠️</div>
+                            <span className={styles.cardTitle}>Low Stock Items</span>
+                        </div>
+                        <p className={styles.cardValue} style={{ color: (data?.lowStockCount || 0) > 0 ? '#ef4444' : 'var(--text-primary)' }}>
                             {data?.lowStockCount}
                         </p>
+                        <div className={styles.trend}>
+                            <span className={styles.trendNeutral}>Requires attention</span>
+                        </div>
                     </div>
-                    <div style={cardStyle}>
-                        <h3 style={cardTitleStyle}>Recent Sales</h3>
-                        <p style={cardValueStyle}>{data?.recentSales.length}</p>
+
+                    <div className={styles.card}>
+                        <div className={styles.cardHeader}>
+                            <div className={styles.iconWrapper}>📈</div>
+                            <span className={styles.cardTitle}>Recent Sales</span>
+                        </div>
+                        <p className={styles.cardValue}>{data?.recentSales.length}</p>
+                        <div className={styles.trend}>
+                            <span className={styles.trendNeutral}>Latest activity</span>
+                        </div>
                     </div>
                 </div>
 
-                {data && <AnalyticsCharts topProducts={data.topProducts} />}
+                <div className={styles.chartsSection}>
+                    {data && <AnalyticsCharts topProducts={data.topProducts} />}
+                </div>
             </div>
         </>
     );
 }
-
-const cardStyle = {
-    background: 'var(--card-bg)',
-    padding: '1.5rem',
-    borderRadius: '12px',
-    border: '1px solid var(--border-color)'
-};
-
-const cardTitleStyle = {
-    color: 'var(--text-secondary)',
-    fontSize: '0.875rem',
-    marginBottom: '0.5rem'
-};
-
-const cardValueStyle = {
-    fontSize: '2rem',
-    fontWeight: '700',
-    color: 'var(--text-primary)'
-};

@@ -15,39 +15,53 @@ import {
     Cell,
 } from 'recharts';
 
+import styles from './analytics-charts.module.css';
+
 interface AnalyticsChartsProps {
     topProducts: { name: string; sales: number }[];
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 export default function AnalyticsCharts({ topProducts }: AnalyticsChartsProps) {
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: '2rem' }}>
-            <div style={{ background: 'var(--secondary-color)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>Top Selling Products</h3>
-                <div style={{ height: 300, width: '100%' }}>
+        <div className={styles.container}>
+            <div className={styles.chartCard}>
+                <h3 className={styles.chartTitle}>📊 Top Selling Products</h3>
+                <div className={styles.chartWrapper}>
                     <ResponsiveContainer>
                         <BarChart
                             data={topProducts}
                             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                         >
-                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                            <XAxis dataKey="name" stroke="var(--text-secondary)" />
-                            <YAxis stroke="var(--text-secondary)" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                            <XAxis dataKey="name" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} />
+                            <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} />
                             <Tooltip
-                                contentStyle={{ backgroundColor: 'var(--secondary-color)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
+                                contentStyle={{
+                                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                    borderColor: 'rgba(255,255,255,0.1)',
+                                    color: '#fff',
+                                    borderRadius: '8px',
+                                    backdropFilter: 'blur(4px)'
+                                }}
+                                itemStyle={{ color: '#fff' }}
+                                cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                             />
-                            <Legend />
-                            <Bar dataKey="sales" fill="var(--accent-color)" name="Units Sold" />
+                            <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                            <Bar dataKey="sales" fill="url(#colorSales)" name="Units Sold" radius={[4, 4, 0, 0]}>
+                                {topProducts.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                            </Bar>
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
             </div>
 
-            <div style={{ background: 'var(--secondary-color)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>Sales Distribution</h3>
-                <div style={{ height: 300, width: '100%' }}>
+            <div className={styles.chartCard}>
+                <h3 className={styles.chartTitle}>🥧 Sales Distribution</h3>
+                <div className={styles.chartWrapper}>
                     <ResponsiveContainer>
                         <PieChart>
                             <Pie
@@ -55,16 +69,27 @@ export default function AnalyticsCharts({ topProducts }: AnalyticsChartsProps) {
                                 cx="50%"
                                 cy="50%"
                                 labelLine={false}
-                                label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                                label={({ name, percent }) => `${(percent ? percent * 100 : 0).toFixed(0)}%`}
                                 outerRadius={100}
-                                fill="#8884d8"
+                                innerRadius={60}
+                                paddingAngle={5}
                                 dataKey="sales"
                             >
                                 {topProducts.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="rgba(30, 41, 59, 0.8)" strokeWidth={2} />
                                 ))}
                             </Pie>
-                            <Tooltip />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                    borderColor: 'rgba(255,255,255,0.1)',
+                                    color: '#fff',
+                                    borderRadius: '8px',
+                                    backdropFilter: 'blur(4px)'
+                                }}
+                                itemStyle={{ color: '#fff' }}
+                            />
+                            <Legend verticalAlign="bottom" height={36} />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
