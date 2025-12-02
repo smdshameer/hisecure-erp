@@ -52,6 +52,25 @@ export default function InventoryPage() {
         }
     };
 
+    const [editingId, setEditingId] = useState<number | null>(null);
+
+    const handleEdit = (product: Product) => {
+        setEditingId(product.id);
+        setFormData({
+            sku: product.sku,
+            name: product.name,
+            category: product.category,
+            price: product.price,
+            costPrice: product.costPrice,
+            stockQuantity: product.stockQuantity,
+            lowStockThreshold: product.lowStockThreshold,
+            warrantyMonths: product.warrantyMonths,
+            hsnCode: product.hsnCode,
+            gstRate: product.gstRate
+        });
+        setShowModal(true);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -66,10 +85,19 @@ export default function InventoryPage() {
                 gstRate: Number(formData.gstRate)
             };
             const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
-            await axios.post(`${apiUrl}/products`, payload, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+
+            if (editingId) {
+                await axios.patch(`${apiUrl}/products/${editingId}`, payload, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            } else {
+                await axios.post(`${apiUrl}/products`, payload, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            }
+
             setShowModal(false);
+            setEditingId(null);
             fetchProducts();
             setFormData({
                 sku: '',
@@ -84,8 +112,8 @@ export default function InventoryPage() {
                 gstRate: 0
             });
         } catch (error) {
-            console.error('Failed to create product', error);
-            alert('Failed to create product');
+            console.error('Failed to save product', error);
+            alert('Failed to save product');
         }
     };
 
@@ -95,7 +123,22 @@ export default function InventoryPage() {
             <div className={styles.container}>
                 <div className={styles.actions}>
                     <input type="text" placeholder="Search products..." className={styles.search} />
-                    <button className={styles.addButton} onClick={() => setShowModal(true)}>+ Add Product</button>
+                    <button className={styles.addButton} onClick={() => {
+                        setEditingId(null);
+                        setFormData({
+                            sku: '',
+                            name: '',
+                            category: '',
+                            price: '0',
+                            costPrice: '0',
+                            stockQuantity: 0,
+                            lowStockThreshold: 5,
+                            warrantyMonths: 0,
+                            hsnCode: '',
+                            gstRate: 0
+                        });
+                        setShowModal(true);
+                    }}>+ Add Product</button>
                 </div>
 
                 <div className={styles.tableContainer}>
@@ -131,7 +174,7 @@ export default function InventoryPage() {
                                         </span>
                                     </td>
                                     <td>
-                                        <button className={styles.actionBtn}>Edit</button>
+                                        <button className={styles.actionBtn} onClick={() => handleEdit(product)}>Edit</button>
                                     </td>
                                 </tr>
                             ))}
@@ -143,7 +186,7 @@ export default function InventoryPage() {
             {showModal && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modal}>
-                        <h2>Add New Product</h2>
+                        <h2>{editingId ? 'Edit Product' : 'Add New Product'}</h2>
                         <form onSubmit={handleSubmit}>
                             <div className={styles.formGroup}>
                                 <label>SKU</label>
