@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Barcode from 'react-barcode';
 import Header from '../../../components/Header';
 import styles from './inventory.module.css';
 
@@ -53,6 +54,7 @@ export default function InventoryPage() {
     };
 
     const [editingId, setEditingId] = useState<number | null>(null);
+    const [barcodeProduct, setBarcodeProduct] = useState<Product | null>(null);
 
     const handleEdit = (product: Product) => {
         setEditingId(product.id);
@@ -175,6 +177,7 @@ export default function InventoryPage() {
                                     </td>
                                     <td>
                                         <button className={styles.actionBtn} onClick={() => handleEdit(product)}>Edit</button>
+                                        <button className={styles.actionBtn} style={{ marginLeft: '0.5rem', background: 'var(--accent-color)' }} onClick={() => setBarcodeProduct(product)}>Barcode</button>
                                     </td>
                                 </tr>
                             ))}
@@ -286,6 +289,22 @@ export default function InventoryPage() {
                                 <button type="submit" className={styles.submitBtn}>Save Product</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+            {barcodeProduct && (
+                <div className={styles.modalOverlay} onClick={() => setBarcodeProduct(null)}>
+                    <div className={styles.modal} onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+                        <h2>Product Barcode</h2>
+                        <div style={{ background: 'white', padding: '1rem', margin: '1rem 0', borderRadius: '8px', display: 'inline-block' }}>
+                            <Barcode value={barcodeProduct.sku} />
+                        </div>
+                        <p><strong>{barcodeProduct.name}</strong></p>
+                        <p>SKU: {barcodeProduct.sku}</p>
+                        <div className={styles.modalActions} style={{ justifyContent: 'center', marginTop: '1rem' }}>
+                            <button className={styles.cancelBtn} onClick={() => setBarcodeProduct(null)}>Close</button>
+                            <button className={styles.submitBtn} onClick={() => window.print()}>Print</button>
+                        </div>
                     </div>
                 </div>
             )}
