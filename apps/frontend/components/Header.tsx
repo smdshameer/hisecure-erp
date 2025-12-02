@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import styles from './Header.module.css';
+import { useSidebar } from '../context/SidebarContext';
 
 export default function Header({ title }: { title: string }) {
     const [user, setUser] = useState<{ name: string; role: string } | null>(null);
     const [isMounted, setIsMounted] = useState(false);
+    const { toggleSidebar } = useSidebar();
 
     useEffect(() => {
         setIsMounted(true);
@@ -17,7 +19,10 @@ export default function Header({ title }: { title: string }) {
 
     return (
         <header className={styles.header}>
-            <h1 className={styles.title}>{title}</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button className={styles.menuBtn} onClick={toggleSidebar}>☰</button>
+                <h1 className={styles.title}>{title}</h1>
+            </div>
             <div className={styles.profile}>
                 <div className={styles.avatar}>
                     {isMounted ? (user?.name?.charAt(0) || 'U') : 'U'}
