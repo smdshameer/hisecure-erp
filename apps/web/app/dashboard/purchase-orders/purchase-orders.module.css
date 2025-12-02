@@ -4,167 +4,113 @@
 
 .actions {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-}
-
-.search {
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: var(--secondary-color);
-    color: var(--text-primary);
-    width: 300px;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .addButton {
-    padding: 0.75rem 1.5rem;
     background: var(--accent-color);
-    color: #fff;
-    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
     border-radius: 8px;
     font-weight: 600;
+    font-size: 0.9375rem;
     cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: background 0.2s ease;
+    border: none;
+    transition: all 0.2s;
 }
 
 .addButton:hover {
-    background: var(--accent-hover);
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .tableContainer {
-    background: var(--secondary-color);
+    background: var(--card-bg);
     border-radius: 12px;
     border: 1px solid var(--border-color);
     overflow: hidden;
+    overflow-x: auto;
 }
 
 .table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 800px;
 }
 
 .table th,
-
-.statusRECEIVED {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
+.table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.statusCANCELLED {
-    background: rgba(239, 68, 68, 0.15);
-    color: #f87171;
+.table th {
+    background: rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.table td {
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.statusPending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.statusApproved {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.statusRejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.statusReceived {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
 }
 
 .viewBtn {
-    padding: 0.5rem 1rem;
     background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    padding: 0.4rem 0.8rem;
     border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.8rem;
     cursor: pointer;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
 }
 
 .viewBtn:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-}
-
-/* Create Page Styles */
-.formContainer {
-    background: var(--secondary-color);
-    padding: 2rem;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.formGroup {
-    margin-bottom: 1.5rem;
-}
-
-.formGroup label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--text-secondary);
-}
-
-.formGroup select,
-.formGroup input {
-    width: 100%;
-    padding: 0.75rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: var(--primary-color);
-    color: var(--text-primary);
-}
-
-.itemsSection {
-    margin-top: 2rem;
-    border-top: 1px solid var(--border-color);
-    padding-top: 1rem;
-}
-
-.itemRow {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 0.5fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    align-items: end;
-}
-
-.removeBtn {
-    padding: 0.75rem;
-    background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.addItemBtn {
-    margin-top: 1rem;
-    padding: 0.75rem 1.5rem;
-    background: transparent;
-    border: 1px dashed var(--border-color);
-    color: var(--text-secondary);
-    border-radius: 8px;
-    cursor: pointer;
-    width: 100%;
-}
-
-.addItemBtn:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-}
-
-.formActions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.cancelBtn {
-    padding: 0.75rem 1.5rem;
-    background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    border-radius: 8px;
-    text-decoration: none;
-}
-
-.submitBtn {
-    padding: 0.75rem 1.5rem;
     background: var(--accent-color);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
 }

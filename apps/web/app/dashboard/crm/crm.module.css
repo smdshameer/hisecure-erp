@@ -2,116 +2,98 @@
     padding: 2rem;
 }
 
-.tableContainer {
-    background: var(--card-bg);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    overflow: hidden;
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table th,
-.table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.table th {
-    background: var(--primary-color);
+.addButton {
+    background: var(--accent-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
     font-weight: 600;
-    color: var(--text-secondary);
-}
-
-.email {
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-.phone {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-top: 0.25rem;
-}
-
-.message {
-    max-width: 300px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--text-secondary);
-}
-
-.statusSelect {
-    padding: 0.5rem;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    background: var(--card-bg);
-    color: var(--text-primary);
-    font-size: 0.875rem;
-}
-
-.statusNew {
-    border-left: 4px solid #3b82f6;
-}
-
-.statusContacted {
-    border-left: 4px solid #f59e0b;
-}
-
-.statusConverted {
-    border-left: 4px solid #10b981;
-}
-
-.statusClosed {
-    border-left: 4px solid #6b7280;
-}
-
-.saveBtn,
-.cancelBtn,
-.actionBtn {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 0.9375rem;
     cursor: pointer;
     border: none;
     transition: all 0.2s;
 }
 
-.saveBtn {
-    background: var(--success-color);
-    color: white;
-    margin-right: 0.5rem;
-}
-
-.cancelBtn {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-}
-
-.actionBtn {
-    background: var(--primary-color);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-.submitBtn {
-    background: var(--accent-color);
-    color: white;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    border: none;
-}
-
-.submitBtn:hover {
+.addButton:hover {
     opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tableContainer {
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.table th,
+.table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table th {
+    background: rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.table td {
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.statusNew {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.statusContacted {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.statusQualified {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.statusLost {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
 }
