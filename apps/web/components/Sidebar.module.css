@@ -1,59 +1,101 @@
 .sidebar {
     width: 250px;
+    height: 100vh;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    transition: transform 0.3s ease;
+}
 
-    .logo h2 {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--accent-color);
+.logo {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.nav {
+    flex: 1;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-y: auto;
+}
+
+.link {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.link:hover {
+    background: var(--primary-color);
+    color: var(--text-primary);
+}
+
+.active {
+    background: var(--accent-color);
+    color: #fff;
+}
+
+.active:hover {
+    background: var(--accent-hover);
+    color: #fff;
+}
+
+.footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.logoutBtn {
+    width: 100%;
+    padding: 0.75rem;
+    background: transparent;
+    border: 1px solid var(--error-color);
+    color: var(--error-color);
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.logoutBtn:hover {
+    background: var(--error-color);
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
     }
 
-    .nav {
-        flex: 1;
-        padding: 1.5rem 1rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
+    .sidebar.open {
+        transform: translateX(0);
     }
 
-    .link {
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        color: var(--text-secondary);
-        font-weight: 500;
-        transition: all 0.2s ease;
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 40;
     }
-
-    .link:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text-primary);
-    }
-
-    .active {
-        background: var(--accent-color);
-        color: #fff;
-    }
-
-    .active:hover {
-        background: var(--accent-hover);
-    }
-
-    .footer {
-        padding: 1.5rem;
-        border-top: 1px solid var(--border-color);
-    }
-
-    .logoutBtn {
-        width: 100%;
-        padding: 0.75rem;
-        background: transparent;
-        border: 1px solid var(--error-color);
-        color: var(--error-color);
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-    }
-
-    .logoutBtn:hover {
-        background: var(--error-color);
-        color: #fff;
-    }
+}

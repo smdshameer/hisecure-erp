@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Barcode from 'react-barcode';
 import Header from '../../../components/Header';
 import styles from './inventory.module.css';
 
@@ -17,6 +18,8 @@ interface Product {
     hsnCode: string;
     gstRate: number;
     warrantyMonths: number;
+    autoReorder: boolean;
+    reorderQuantity: number;
 }
 
 export default function InventoryPage() {
@@ -33,7 +36,9 @@ export default function InventoryPage() {
         lowStockThreshold: 5,
         warrantyMonths: 0,
         hsnCode: '',
-        gstRate: 0
+        gstRate: 0,
+        autoReorder: false,
+        reorderQuantity: 0
     });
 
     useEffect(() => {
@@ -51,6 +56,30 @@ export default function InventoryPage() {
         }
     };
 
+
+
+    const [editingId, setEditingId] = useState<number | null>(null);
+    const [barcodeProduct, setBarcodeProduct] = useState<Product | null>(null);
+
+    const handleEdit = (product: Product) => {
+        setEditingId(product.id);
+        setFormData({
+            sku: product.sku,
+            name: product.name,
+            category: product.category,
+            price: product.price,
+            costPrice: product.costPrice,
+            stockQuantity: product.stockQuantity,
+            lowStockThreshold: product.lowStockThreshold,
+            warrantyMonths: product.warrantyMonths,
+            hsnCode: product.hsnCode,
+            gstRate: product.gstRate,
+            autoReorder: product.autoReorder,
+            reorderQuantity: product.reorderQuantity
+        });
+        setShowModal(true);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -62,12 +91,24 @@ export default function InventoryPage() {
                 stockQuantity: Number(formData.stockQuantity),
                 lowStockThreshold: Number(formData.lowStockThreshold),
                 warrantyMonths: Number(formData.warrantyMonths),
-                gstRate: Number(formData.gstRate)
+                gstRate: Number(formData.gstRate),
+                autoReorder: Boolean(formData.autoReorder),
+                reorderQuantity: Number(formData.reorderQuantity)
             };
-            await axios.post('http://localhost:3000/products', payload, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const apiUrl = 'http://localhost:3000';
+
+            if (editingId) {
+                await axios.patch(`${apiUrl}/products/${editingId}`, payload, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            } else {
+                await axios.post(`${apiUrl}/products`, payload, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            }
+
             setShowModal(false);
+            setEditingId(null);
             fetchProducts();
             setFormData({
                 sku: '',
@@ -79,11 +120,13 @@ export default function InventoryPage() {
                 lowStockThreshold: 5,
                 warrantyMonths: 0,
                 hsnCode: '',
-                gstRate: 0
+                gstRate: 0,
+                autoReorder: false,
+                reorderQuantity: 0
             });
         } catch (error) {
-            console.error('Failed to create product', error);
-            alert('Failed to create product');
+            console.error('Failed to save product', error);
+            alert('Failed to save product');
         }
     };
 
@@ -93,7 +136,24 @@ export default function InventoryPage() {
             <div className={styles.container}>
                 <div className={styles.actions}>
                     <input type="text" placeholder="Search products..." className={styles.search} />
-                    <button className={styles.addButton} onClick={() => setShowModal(true)}>+ Add Product</button>
+                    <button className={styles.addButton} onClick={() => {
+                        setEditingId(null);
+                        setFormData({
+                            sku: '',
+                            name: '',
+                            category: '',
+                            price: '0',
+                            costPrice: '0',
+                            stockQuantity: 0,
+                            lowStockThreshold: 5,
+                            warrantyMonths: 0,
+                            hsnCode: '',
+                            gstRate: 0,
+                            autoReorder: false,
+                            reorderQuantity: 0
+                        });
+                        setShowModal(true);
+                    }}>+ Add Product</button>
                 </div>
 
                 <div className={styles.tableContainer}>
@@ -129,7 +189,8 @@ export default function InventoryPage() {
                                         </span>
                                     </td>
                                     <td>
-                                        <button className={styles.actionBtn}>Edit</button>
+                                        <button className={styles.actionBtn} onClick={() => handleEdit(product)}>Edit</button>
+                                        <button className={styles.actionBtn} style={{ marginLeft: '0.5rem', background: 'var(--accent-color)', color: 'white', padding: '0.25rem 0.5rem', borderRadius: '4px' }} onClick={() => setBarcodeProduct(product)}>Barcode</button>
                                     </td>
                                 </tr>
                             ))}
@@ -141,7 +202,7 @@ export default function InventoryPage() {
             {showModal && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modal}>
-                        <h2>Add New Product</h2>
+                        <h2>{editingId ? 'Edit Product' : 'Add New Product'}</h2>
                         <form onSubmit={handleSubmit}>
                             <div className={styles.formGroup}>
                                 <label>SKU</label>
@@ -236,11 +297,48 @@ export default function InventoryPage() {
                                     placeholder="0 for no warranty"
                                 />
                             </div>
+                            <div className={styles.row}>
+                                <div className={styles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.autoReorder}
+                                        onChange={(e) => setFormData({ ...formData, autoReorder: e.target.checked })}
+                                        style={{ width: 'auto' }}
+                                    />
+                                    <label style={{ marginBottom: 0 }}>Enable Auto Reorder</label>
+                                </div>
+                                {formData.autoReorder && (
+                                    <div className={styles.formGroup}>
+                                        <label>Reorder Quantity</label>
+                                        <input
+                                            type="number"
+                                            value={formData.reorderQuantity}
+                                            onChange={(e) => setFormData({ ...formData, reorderQuantity: Number(e.target.value) })}
+                                        />
+                                    </div>
+                                )}
+                            </div>
                             <div className={styles.modalActions}>
                                 <button type="button" onClick={() => setShowModal(false)} className={styles.cancelBtn}>Cancel</button>
                                 <button type="submit" className={styles.submitBtn}>Save Product</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+            {barcodeProduct && (
+                <div className={styles.modalOverlay} onClick={() => setBarcodeProduct(null)}>
+                    <div className={styles.modal} onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+                        <h2>Product Barcode</h2>
+                        <div style={{ background: 'white', padding: '1rem', margin: '1rem 0', borderRadius: '8px', display: 'inline-block' }}>
+                            <Barcode value={barcodeProduct.sku} />
+                        </div>
+                        <p><strong>{barcodeProduct.name}</strong></p>
+                        <p>SKU: {barcodeProduct.sku}</p>
+                        <div className={styles.modalActions} style={{ justifyContent: 'center', marginTop: '1rem' }}>
+                            <button className={styles.cancelBtn} onClick={() => setBarcodeProduct(null)}>Close</button>
+                            <button className={styles.submitBtn} onClick={() => window.print()}>Print</button>
+                        </div>
                     </div>
                 </div>
             )}

@@ -18,6 +18,8 @@ interface Product {
     hsnCode: string;
     gstRate: number;
     warrantyMonths: number;
+    autoReorder: boolean;
+    reorderQuantity: number;
 }
 
 export default function InventoryPage() {
@@ -34,7 +36,9 @@ export default function InventoryPage() {
         lowStockThreshold: 5,
         warrantyMonths: 0,
         hsnCode: '',
-        gstRate: 0
+        gstRate: 0,
+        autoReorder: false,
+        reorderQuantity: 0
     });
 
     useEffect(() => {
@@ -68,7 +72,9 @@ export default function InventoryPage() {
             lowStockThreshold: product.lowStockThreshold,
             warrantyMonths: product.warrantyMonths,
             hsnCode: product.hsnCode,
-            gstRate: product.gstRate
+            gstRate: product.gstRate,
+            autoReorder: product.autoReorder,
+            reorderQuantity: product.reorderQuantity
         });
         setShowModal(true);
     };
@@ -84,7 +90,9 @@ export default function InventoryPage() {
                 stockQuantity: Number(formData.stockQuantity),
                 lowStockThreshold: Number(formData.lowStockThreshold),
                 warrantyMonths: Number(formData.warrantyMonths),
-                gstRate: Number(formData.gstRate)
+                gstRate: Number(formData.gstRate),
+                autoReorder: Boolean(formData.autoReorder),
+                reorderQuantity: Number(formData.reorderQuantity)
             };
             const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
 
@@ -111,7 +119,9 @@ export default function InventoryPage() {
                 lowStockThreshold: 5,
                 warrantyMonths: 0,
                 hsnCode: '',
-                gstRate: 0
+                gstRate: 0,
+                autoReorder: false,
+                reorderQuantity: 0
             });
         } catch (error) {
             console.error('Failed to save product', error);
@@ -137,7 +147,9 @@ export default function InventoryPage() {
                             lowStockThreshold: 5,
                             warrantyMonths: 0,
                             hsnCode: '',
-                            gstRate: 0
+                            gstRate: 0,
+                            autoReorder: false,
+                            reorderQuantity: 0
                         });
                         setShowModal(true);
                     }}>+ Add Product</button>
@@ -283,6 +295,27 @@ export default function InventoryPage() {
                                     onChange={(e) => setFormData({ ...formData, warrantyMonths: Number(e.target.value) })}
                                     placeholder="0 for no warranty"
                                 />
+                            </div>
+                            <div className={styles.row}>
+                                <div className={styles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.autoReorder}
+                                        onChange={(e) => setFormData({ ...formData, autoReorder: e.target.checked })}
+                                        style={{ width: 'auto' }}
+                                    />
+                                    <label style={{ marginBottom: 0 }}>Enable Auto Reorder</label>
+                                </div>
+                                {formData.autoReorder && (
+                                    <div className={styles.formGroup}>
+                                        <label>Reorder Quantity</label>
+                                        <input
+                                            type="number"
+                                            value={formData.reorderQuantity}
+                                            onChange={(e) => setFormData({ ...formData, reorderQuantity: Number(e.target.value) })}
+                                        />
+                                    </div>
+                                )}
                             </div>
                             <div className={styles.modalActions}>
                                 <button type="button" onClick={() => setShowModal(false)} className={styles.cancelBtn}>Cancel</button>

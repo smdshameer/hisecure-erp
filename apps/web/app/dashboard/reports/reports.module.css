@@ -12,13 +12,13 @@
 .title {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--text-primary);
 }
 
 .tabs {
     display: flex;
     gap: 1rem;
-    background: #f1f5f9;
+    background: var(--primary-color);
     padding: 0.25rem;
     border-radius: 8px;
 }
@@ -27,7 +27,7 @@
     padding: 0.5rem 1rem;
     border: none;
     background: transparent;
-    color: #64748b;
+    color: var(--text-secondary);
     font-weight: 600;
     cursor: pointer;
     border-radius: 6px;
@@ -35,9 +35,9 @@
 }
 
 .activeTab {
-    background: white;
-    color: #0f172a;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
 }
 
 .filters {
@@ -48,9 +48,10 @@
 
 .select {
     padding: 0.5rem;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
-    background: white;
+    background: var(--card-bg);
+    color: var(--text-primary);
 }
 
 .statsGrid {
@@ -61,38 +62,40 @@
 }
 
 .statCard {
-    background: white;
+    background: var(--card-bg);
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
     display: flex;
     flex-direction: column;
+    border: 1px solid var(--border-color);
 }
 
 .statLabel {
     font-size: 0.875rem;
-    color: #64748b;
+    color: var(--text-secondary);
     margin-bottom: 0.5rem;
 }
 
 .statValue {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--text-primary);
 }
 
 .section {
-    background: white;
+    background: var(--card-bg);
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
     padding: 1.5rem;
     margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
 }
 
 .sectionTitle {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1e293b;
+    color: var(--text-primary);
     margin-bottom: 1rem;
 }
 
@@ -103,22 +106,22 @@
 }
 
 .summaryCard {
-    background: #f8fafc;
+    background: var(--primary-color);
     padding: 1rem;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
 }
 
 .summaryCard h3 {
     font-size: 1rem;
     margin-bottom: 0.5rem;
-    color: #334155;
+    color: var(--text-primary);
 }
 
 .summaryCard p {
     margin: 0.25rem 0;
     font-size: 0.9rem;
-    color: #475569;
+    color: var(--text-secondary);
 }
 
 .tableContainer {
@@ -134,14 +137,14 @@
 .table td {
     padding: 1rem;
     text-align: left;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-color);
     white-space: nowrap;
 }
 
 .table th {
-    background-color: #f8fafc;
+    background-color: var(--primary-color);
     font-weight: 600;
-    color: #475569;
+    color: var(--text-secondary);
 }
 
 .lowStock {

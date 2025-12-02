@@ -12,7 +12,7 @@
     padding: 0.75rem 1rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    background: var(--secondary-color);
+    background: var(--card-bg);
     color: var(--text-primary);
     width: 300px;
 }
@@ -33,7 +33,7 @@
 }
 
 .tableContainer {
-    background: var(--secondary-color);
+    background: var(--card-bg);
     border-radius: 12px;
     border: 1px solid var(--border-color);
     overflow: hidden;
@@ -52,7 +52,7 @@
 }
 
 .table th {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--primary-color);
     font-weight: 600;
     color: var(--text-secondary);
 }
@@ -62,7 +62,7 @@
 }
 
 .table tr:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--primary-color);
 }
 
 .actionBtn {
@@ -87,7 +87,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -95,15 +95,17 @@
 }
 
 .modal {
-    background: var(--secondary-color);
+    background: var(--card-bg);
     padding: 2rem;
     border-radius: 12px;
     width: 500px;
     border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
 }
 
 .modal h2 {
     margin-bottom: 1.5rem;
+    color: var(--text-primary);
 }
 
 .formGroup {

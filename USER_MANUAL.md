@@ -30,6 +30,8 @@ Navigate to **Inventory** to manage your stock.
 - **Add Product**: Click "Add Product" to create new items.
 - **Edit/Delete**: Use the actions column to modify items.
 - **Search**: Quickly find products by name or SKU.
+- **Barcode**: Click the "Barcode" button on any product to generate and print a barcode label.
+- **Auto-Reorder**: Enable "Auto Reorder" when editing a product to automatically generate Purchase Orders when stock is low.
 
 ### 3. Point of Sale (POS)
 Navigate to **POS** to process sales.

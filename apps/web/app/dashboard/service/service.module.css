@@ -28,38 +28,6 @@
     overflow: hidden;
 }
 
-.table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table th,
-.table td {
-    padding: 1rem 1.5rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.table th {
-    background: rgba(0, 0, 0, 0.2);
-    font-weight: 600;
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-}
-
-.table td {
-    color: var(--text-primary);
-    font-size: 0.9375rem;
-}
-
-.table tr:last-child td {
-    border-bottom: none;
-}
-
-.customerName {
-    font-weight: 600;
-}
-
 .customerPhone {
     font-size: 0.8rem;
     color: var(--text-secondary);
