@@ -12,24 +12,6 @@
         gap: 0.5rem;
     }
 
-    .link {
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        color: var(--text-secondary);
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-
-    .link:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text-primary);
-    }
-
-    .active {
-        background: var(--accent-color);
-        color: #fff;
-    }
-
     .active:hover {
         background: var(--accent-hover);
     }
