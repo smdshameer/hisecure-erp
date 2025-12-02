@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './warranty.module.css';
+import Header from '../../../components/Header';
 
 interface WarrantyClaim {
     id: number;
@@ -35,7 +36,7 @@ export default function WarrantyPage() {
     const fetchClaims = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/warranty/claims', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/warranty/claims`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) {
@@ -54,7 +55,7 @@ export default function WarrantyPage() {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/warranty/claims/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/warranty/claims/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,85 +77,87 @@ export default function WarrantyPage() {
     if (loading) return <div>Loading...</div>;
 
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <h1 className={styles.title}>Warranty Claims</h1>
-                <Link href="/dashboard/warranty/check" className={styles.checkButton}>
-                    Check Warranty / New Claim
-                </Link>
-            </div>
+        <>
+            <Header title="Warranty Claims" />
+            <div className={styles.container}>
+                <div className={styles.actions}>
+                    <Link href="/dashboard/warranty/check" className={styles.checkButton}>
+                        Check Warranty / New Claim
+                    </Link>
+                </div>
 
-            <div className={styles.tableContainer}>
-                <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Date</th>
-                            <th>Invoice</th>
-                            <th>Product</th>
-                            <th>Customer</th>
-                            <th>Issue</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {claims.map((claim) => (
-                            <tr key={claim.id}>
-                                <td>#{claim.id}</td>
-                                <td>{new Date(claim.createdAt).toLocaleDateString()}</td>
-                                <td>{claim.saleItem.sale.invoiceNo}</td>
-                                <td>
-                                    {claim.saleItem.product.name}
-                                    <br />
-                                    <small className="text-gray-500">{claim.saleItem.product.sku}</small>
-                                </td>
-                                <td>{claim.saleItem.sale.customer?.name || 'Walk-in'}</td>
-                                <td>{claim.description}</td>
-                                <td>
-                                    <span className={`${styles.status} ${styles[`status_${claim.status}`]}`}>
-                                        {claim.status}
-                                    </span>
-                                </td>
-                                <td>
-                                    {claim.status === 'PENDING' && (
-                                        <>
-                                            <button
-                                                onClick={() => updateStatus(claim.id, 'APPROVED')}
-                                                className={styles.actionButton}
-                                            >
-                                                Approve
-                                            </button>
-                                            <button
-                                                onClick={() => updateStatus(claim.id, 'REJECTED')}
-                                                className={styles.actionButton}
-                                                style={{ color: '#dc2626' }}
-                                            >
-                                                Reject
-                                            </button>
-                                        </>
-                                    )}
-                                    {claim.status === 'APPROVED' && (
-                                        <button
-                                            onClick={() => updateStatus(claim.id, 'COMPLETED')}
-                                            className={styles.actionButton}
-                                        >
-                                            Complete
-                                        </button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                        {claims.length === 0 && (
+                <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                        <thead>
                             <tr>
-                                <td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>
-                                    No warranty claims found.
-                                </td>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Invoice</th>
+                                <th>Product</th>
+                                <th>Customer</th>
+                                <th>Issue</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {claims.map((claim) => (
+                                <tr key={claim.id}>
+                                    <td>#{claim.id}</td>
+                                    <td>{new Date(claim.createdAt).toLocaleDateString()}</td>
+                                    <td>{claim.saleItem.sale.invoiceNo}</td>
+                                    <td>
+                                        {claim.saleItem.product.name}
+                                        <br />
+                                        <small className="text-gray-500">{claim.saleItem.product.sku}</small>
+                                    </td>
+                                    <td>{claim.saleItem.sale.customer?.name || 'Walk-in'}</td>
+                                    <td>{claim.description}</td>
+                                    <td>
+                                        <span className={`${styles.status} ${styles[`status_${claim.status}`]}`}>
+                                            {claim.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {claim.status === 'PENDING' && (
+                                            <>
+                                                <button
+                                                    onClick={() => updateStatus(claim.id, 'APPROVED')}
+                                                    className={styles.editBtn}
+                                                    style={{ marginRight: '0.5rem' }}
+                                                >
+                                                    Approve
+                                                </button>
+                                                <button
+                                                    onClick={() => updateStatus(claim.id, 'REJECTED')}
+                                                    className={styles.deleteBtn}
+                                                >
+                                                    Reject
+                                                </button>
+                                            </>
+                                        )}
+                                        {claim.status === 'APPROVED' && (
+                                            <button
+                                                onClick={() => updateStatus(claim.id, 'COMPLETED')}
+                                                className={styles.editBtn}
+                                            >
+                                                Complete
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                            {claims.length === 0 && (
+                                <tr>
+                                    <td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>
+                                        No warranty claims found.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        </>
     );
 }

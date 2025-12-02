@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import styles from './branches.module.css';
+import Header from '../../../components/Header';
 
 interface Branch {
     id: number;
@@ -60,76 +61,78 @@ export default function BranchesPage() {
     };
 
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <h1>Branches</h1>
-                <button className={styles.addButton} onClick={() => setIsModalOpen(true)}>
-                    + Add Branch
-                </button>
-            </div>
-
-            <div className={styles.grid}>
-                {branches.map((branch) => (
-                    <div key={branch.id} className={styles.card}>
-                        <h3>{branch.name}</h3>
-                        <p><strong>Location:</strong> {branch.location}</p>
-                        <p><strong>Contact:</strong> {branch.contactPerson}</p>
-                        <p><strong>Phone:</strong> {branch.phone}</p>
-                    </div>
-                ))}
-            </div>
-
-            {isModalOpen && (
-                <div className={styles.modalOverlay}>
-                    <div className={styles.modal}>
-                        <h2>Add New Branch</h2>
-                        <form onSubmit={handleCreate}>
-                            <div className={styles.formGroup}>
-                                <label>Name</label>
-                                <input
-                                    type="text"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label>Location</label>
-                                <input
-                                    type="text"
-                                    value={formData.location}
-                                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label>Contact Person</label>
-                                <input
-                                    type="text"
-                                    value={formData.contactPerson}
-                                    onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
-                                />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label>Phone</label>
-                                <input
-                                    type="text"
-                                    value={formData.phone}
-                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                />
-                            </div>
-                            <div className={styles.actions}>
-                                <button type="button" onClick={() => setIsModalOpen(false)} className={styles.cancelButton}>
-                                    Cancel
-                                </button>
-                                <button type="submit" className={styles.saveButton}>
-                                    Save
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+        <>
+            <Header title="Branches" />
+            <div className={styles.container}>
+                <div className={styles.actions}>
+                    <button className={styles.addButton} onClick={() => setIsModalOpen(true)}>
+                        + Add Branch
+                    </button>
                 </div>
-            )}
-        </div>
+
+                <div className={styles.grid}>
+                    {branches.map((branch) => (
+                        <div key={branch.id} className={styles.card}>
+                            <h3>{branch.name}</h3>
+                            <p><strong>Location:</strong> {branch.location}</p>
+                            <p><strong>Contact:</strong> {branch.contactPerson}</p>
+                            <p><strong>Phone:</strong> {branch.phone}</p>
+                        </div>
+                    ))}
+                </div>
+
+                {isModalOpen && (
+                    <div className={styles.modalOverlay}>
+                        <div className={styles.modal}>
+                            <h2>Add New Branch</h2>
+                            <form onSubmit={handleCreate}>
+                                <div className={styles.formGroup}>
+                                    <label>Name</label>
+                                    <input
+                                        type="text"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Location</label>
+                                    <input
+                                        type="text"
+                                        value={formData.location}
+                                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Contact Person</label>
+                                    <input
+                                        type="text"
+                                        value={formData.contactPerson}
+                                        onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Phone</label>
+                                    <input
+                                        type="text"
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    />
+                                </div>
+                                <div className={styles.actions}>
+                                    <button type="button" onClick={() => setIsModalOpen(false)} className={styles.cancelButton}>
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className={styles.saveButton}>
+                                        Save
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </>
     );
 }
