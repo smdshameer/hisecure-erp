@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './Sidebar.module.css';
+import { useSidebar } from '../context/SidebarContext';
 
 const menuItems = [
     { name: 'Overview', path: '/dashboard' },
@@ -23,31 +24,40 @@ const menuItems = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+    const { isOpen, closeSidebar } = useSidebar();
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        router.push('/login');
+    };
 
     return (
-        <aside className={styles.sidebar}>
-            <div className={styles.logo}>
-                <h2>Hi Secure</h2>
-            </div>
-            <nav className={styles.nav}>
-                {menuItems.map((item) => (
-                    <Link
-                        key={item.path}
-                        href={item.path}
-                        className={`${styles.link} ${pathname === item.path ? styles.active : ''}`}
-                    >
-                        {item.name}
-                    </Link>
-                ))}
-            </nav>
-            <div className={styles.footer}>
-                <button className={styles.logoutBtn} onClick={() => {
-                    localStorage.removeItem('token');
-                    window.location.href = '/login';
-                }}>
-                    Logout
-                </button>
-            </div>
-        </aside>
+        <>
+            {isOpen && <div className={styles.overlay} onClick={closeSidebar}></div>}
+            <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
+                <div className={styles.logo}>
+                    <h2>HiSecure ERP</h2>
+                </div>
+                <nav className={styles.nav}>
+                    {menuItems.map((item) => (
+                        <Link
+                            key={item.path}
+                            href={item.path}
+                            className={`${styles.link} ${pathname === item.path ? styles.active : ''}`}
+                            onClick={closeSidebar}
+                        >
+                            {item.name}
+                        </Link>
+                    ))}
+                </nav>
+                <div className={styles.footer}>
+                    <button className={styles.logoutBtn} onClick={handleLogout}>
+                        Logout
+                    </button>
+                </div>
+            </aside>
+        </>
     );
 }
