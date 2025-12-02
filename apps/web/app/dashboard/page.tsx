@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from '../../components/Header';
 import AnalyticsCharts from '../../components/AnalyticsCharts';
+import styles from './dashboard.module.css';
 
 interface DashboardData {
     totalRevenue: number;
@@ -43,29 +44,25 @@ export default function DashboardPage() {
     return (
         <>
             <Header title="Overview" />
-            <div style={{ padding: '2rem' }}>
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                    gap: '1.5rem'
-                }}>
-                    <div style={cardStyle}>
-                        <h3 style={cardTitleStyle}>Total Revenue</h3>
-                        <p style={cardValueStyle}>₹{data?.totalRevenue.toLocaleString()}</p>
+            <div className={styles.container}>
+                <div className={styles.grid}>
+                    <div className={styles.card}>
+                        <h3 className={styles.cardTitle}>Total Revenue</h3>
+                        <p className={styles.cardValue}>₹{data?.totalRevenue.toLocaleString()}</p>
                     </div>
-                    <div style={cardStyle}>
-                        <h3 style={cardTitleStyle}>Total Orders</h3>
-                        <p style={cardValueStyle}>{data?.totalOrders}</p>
+                    <div className={styles.card}>
+                        <h3 className={styles.cardTitle}>Total Orders</h3>
+                        <p className={styles.cardValue}>{data?.totalOrders}</p>
                     </div>
-                    <div style={cardStyle}>
-                        <h3 style={cardTitleStyle}>Low Stock Items</h3>
-                        <p style={{ ...cardValueStyle, color: (data?.lowStockCount || 0) > 0 ? '#ef4444' : 'var(--text-primary)' }}>
+                    <div className={styles.card}>
+                        <h3 className={styles.cardTitle}>Low Stock Items</h3>
+                        <p className={styles.cardValue} style={{ color: (data?.lowStockCount || 0) > 0 ? '#ef4444' : 'var(--text-primary)' }}>
                             {data?.lowStockCount}
                         </p>
                     </div>
-                    <div style={cardStyle}>
-                        <h3 style={cardTitleStyle}>Recent Sales</h3>
-                        <p style={cardValueStyle}>{data?.recentSales.length}</p>
+                    <div className={styles.card}>
+                        <h3 className={styles.cardTitle}>Recent Sales</h3>
+                        <p className={styles.cardValue}>{data?.recentSales.length}</p>
                     </div>
                 </div>
 
@@ -74,22 +71,3 @@ export default function DashboardPage() {
         </>
     );
 }
-
-const cardStyle = {
-    background: 'var(--card-bg)',
-    padding: '1.5rem',
-    borderRadius: '12px',
-    border: '1px solid var(--border-color)'
-};
-
-const cardTitleStyle = {
-    color: 'var(--text-secondary)',
-    fontSize: '0.875rem',
-    marginBottom: '0.5rem'
-};
-
-const cardValueStyle = {
-    fontSize: '2rem',
-    fontWeight: '700',
-    color: 'var(--text-primary)'
-};

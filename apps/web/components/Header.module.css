@@ -3,6 +3,35 @@
     background: var(--card-bg);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.menuBtn {
+    display: none;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-right: 0.5rem;
+}
+
+.menuBtn:hover {
+    background: var(--primary-color);
 }
 
 .profile {
@@ -38,4 +67,18 @@
 .role {
     font-size: 0.75rem;
     color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+    .menuBtn {
+        display: block;
+    }
+
+    .info {
+        display: none;
+    }
+
+    .header {
+        padding: 0 1rem;
+    }
 }
