@@ -9,7 +9,7 @@ export class SalesService {
   constructor(
     private prisma: PrismaService,
     private mailService: MailService,
-  ) { }
+  ) {}
 
   async create(createSaleDto: CreateSaleDto, userId: number) {
     const { items, ...saleData } = createSaleDto;
@@ -20,18 +20,22 @@ export class SalesService {
       let subTotal = 0;
       let totalCgst = 0;
       let totalSgst = 0;
-      let totalIgst = 0;
+      const totalIgst = 0;
 
       // Prepare items with current product data (price, gst)
       const saleItems = [];
 
       for (const item of items) {
-        const product = await prisma.product.findUnique({ where: { id: item.productId } });
+        const product = await prisma.product.findUnique({
+          where: { id: item.productId },
+        });
         if (!product) {
           throw new BadRequestException(`Product ${item.productId} not found`);
         }
         if (product.stockQuantity < item.quantity) {
-          throw new BadRequestException(`Insufficient stock for Product ${product.name}`);
+          throw new BadRequestException(
+            `Insufficient stock for Product ${product.name}`,
+          );
         }
 
         // Use product price from DB to ensure accuracy, or trust DTO if dynamic pricing allowed.
@@ -66,7 +70,13 @@ export class SalesService {
         // Check Low Stock
         if (updatedProduct.stockQuantity <= updatedProduct.lowStockThreshold) {
           // Send alert asynchronously (don't await to avoid blocking transaction)
-          this.mailService.sendLowStockAlert('manager@hisecure.com', updatedProduct.name, updatedProduct.stockQuantity).catch(console.error);
+          this.mailService
+            .sendLowStockAlert(
+              'manager@hisecure.com',
+              updatedProduct.name,
+              updatedProduct.stockQuantity,
+            )
+            .catch(console.error);
         }
       }
 
@@ -96,7 +106,13 @@ export class SalesService {
     // Send Invoice Email (outside transaction)
     // In a real app, we would fetch the customer email or use the logged-in user's email
     // For now, we send to a test email or the manager
-    this.mailService.sendInvoice('customer@example.com', sale.invoiceNo, Number(sale.totalAmount)).catch(console.error);
+    this.mailService
+      .sendInvoice(
+        'customer@example.com',
+        sale.invoiceNo,
+        Number(sale.totalAmount),
+      )
+      .catch(console.error);
 
     return sale;
   }
@@ -117,7 +133,8 @@ export class SalesService {
     });
   }
 
-  update(id: number, updateSaleDto: UpdateSaleDto) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  update(id: number, _updateSaleDto: UpdateSaleDto) {
     return `This action updates a #${id} sale`;
   }
 

@@ -6,7 +6,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @Controller('accounting')
 @UseGuards(JwtAuthGuard)
 export class AccountingController {
-  constructor(private readonly accountingService: AccountingService) { }
+  constructor(private readonly accountingService: AccountingService) {}
 
   @Get('sales')
   async exportSales(
@@ -16,7 +16,10 @@ export class AccountingController {
   ) {
     const csv = await this.accountingService.exportSales(startDate, endDate);
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename=sales-${startDate}-to-${endDate}.csv`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=sales-${startDate}-to-${endDate}.csv`,
+    );
     res.send(csv);
   }
 
@@ -26,9 +29,15 @@ export class AccountingController {
     @Query('endDate') endDate: string,
     @Res() res: express.Response,
   ) {
-    const csv = await this.accountingService.exportPurchases(startDate, endDate);
+    const csv = await this.accountingService.exportPurchases(
+      startDate,
+      endDate,
+    );
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename=purchases-${startDate}-to-${endDate}.csv`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=purchases-${startDate}-to-${endDate}.csv`,
+    );
     res.send(csv);
   }
 }

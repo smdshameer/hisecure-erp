@@ -1,25 +1,25 @@
-import { IsString, IsNumber, IsArray, ValidateNested, IsInt, Min } from 'class-validator';
+import { IsNumber, IsArray, ValidateNested, IsInt, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class PurchaseOrderItemDto {
-    @IsInt()
-    productId: number;
+  @IsInt()
+  productId: number;
 
-    @IsInt()
-    @Min(1)
-    quantity: number;
+  @IsInt()
+  @Min(1)
+  quantity: number;
 
-    @IsNumber()
-    @Min(0)
-    unitCost: number;
+  @IsNumber()
+  @Min(0)
+  unitCost: number;
 }
 
 export class CreatePurchaseOrderDto {
-    @IsInt()
-    supplierId: number;
+  @IsInt()
+  supplierId: number;
 
-    @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => PurchaseOrderItemDto)
-    items: PurchaseOrderItemDto[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PurchaseOrderItemDto)
+  items: PurchaseOrderItemDto[];
 }

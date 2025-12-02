@@ -4,7 +4,7 @@ import { MailModule } from '../mail/mail.module';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-    imports: [MailModule, PrismaModule],
-    providers: [AutomationService],
+  imports: [MailModule, PrismaModule],
+  providers: [AutomationService],
 })
-export class AutomationModule { }
+export class AutomationModule {}

@@ -27,9 +27,26 @@ import { AnalyticsModule } from './analytics/analytics.module';
   imports: [
     ScheduleModule.forRoot(),
     AutomationModule,
-    UsersModule, AuthModule, PrismaModule, ProductsModule, SalesModule, ServiceTicketsModule, CustomersModule, EnquiriesModule, PdfModule, StorageModule, ReportsModule, SuppliersModule, PurchaseOrdersModule, WarrantyModule, AccountingModule, BranchesModule, TransfersModule, AnalyticsModule
+    UsersModule,
+    AuthModule,
+    PrismaModule,
+    ProductsModule,
+    SalesModule,
+    ServiceTicketsModule,
+    CustomersModule,
+    EnquiriesModule,
+    PdfModule,
+    StorageModule,
+    ReportsModule,
+    SuppliersModule,
+    PurchaseOrdersModule,
+    WarrantyModule,
+    AccountingModule,
+    BranchesModule,
+    TransfersModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

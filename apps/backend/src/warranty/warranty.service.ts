@@ -1,10 +1,17 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateWarrantyClaimDto, UpdateWarrantyClaimDto } from './dto/create-warranty.dto';
+import {
+  CreateWarrantyClaimDto,
+  UpdateWarrantyClaimDto,
+} from './dto/create-warranty.dto';
 
 @Injectable()
 export class WarrantyService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async createClaim(createWarrantyDto: CreateWarrantyClaimDto) {
     // 1. Check if SaleItem exists and fetch details
@@ -32,7 +39,9 @@ export class WarrantyService {
     expiryDate.setMonth(expiryDate.getMonth() + warrantyMonths);
 
     if (new Date() > expiryDate) {
-      throw new BadRequestException(`Warranty expired on ${expiryDate.toLocaleDateString()}`);
+      throw new BadRequestException(
+        `Warranty expired on ${expiryDate.toLocaleDateString()}`,
+      );
     }
 
     // 3. Create Claim
@@ -54,12 +63,12 @@ export class WarrantyService {
             sale: {
               include: {
                 customer: true,
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -70,10 +79,10 @@ export class WarrantyService {
         saleItem: {
           include: {
             product: true,
-            sale: true
-          }
-        }
-      }
+            sale: true,
+          },
+        },
+      },
     });
     if (!claim) throw new NotFoundException('Claim not found');
     return claim;
@@ -93,15 +102,15 @@ export class WarrantyService {
       include: {
         items: {
           include: {
-            product: true
-          }
-        }
-      }
+            product: true,
+          },
+        },
+      },
     });
 
     if (!sale) throw new NotFoundException('Invoice not found');
 
-    return sale.items.map(item => {
+    return sale.items.map((item) => {
       const purchaseDate = new Date(sale.createdAt);
       const warrantyMonths = item.product.warrantyMonths;
       const expiryDate = new Date(purchaseDate);
@@ -116,7 +125,7 @@ export class WarrantyService {
         purchaseDate,
         expiryDate,
         isValid,
-        saleItemId: item.id
+        saleItemId: item.id,
       };
     });
   }

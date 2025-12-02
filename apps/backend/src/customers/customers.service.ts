@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CustomersService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createCustomerDto: CreateCustomerDto) {
     // Check if customer with same email or phone already exists
@@ -19,7 +19,9 @@ export class CustomersService {
     });
 
     if (existingCustomer) {
-      throw new Error('Customer already exists with this email or phone number');
+      throw new Error(
+        'Customer already exists with this email or phone number',
+      );
     }
 
     return this.prisma.customer.create({

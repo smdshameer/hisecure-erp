@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request, Res, Patch, Delete } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Request,
+  Res,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import type { Response } from 'express';
 import { SalesService } from './sales.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
@@ -14,7 +26,7 @@ export class SalesController {
     private readonly salesService: SalesService,
     private readonly pdfService: PdfService,
     private readonly mailService: MailService,
-  ) { }
+  ) {}
 
   @Post()
   async create(@Request() req: any, @Body() createSaleDto: CreateSaleDto) {
@@ -23,7 +35,9 @@ export class SalesController {
     // Send email if customer email is available (mocking for now as we don't always have customer email in sale)
     // In a real app, we'd fetch the customer or use the user's email if logged in
     if (req.user && req.user.email) {
-      this.mailService.sendInvoice(req.user.email, sale.invoiceNo, Number(sale.totalAmount)).catch(console.error);
+      this.mailService
+        .sendInvoice(req.user.email, sale.invoiceNo, Number(sale.totalAmount))
+        .catch(console.error);
     }
 
     return sale;

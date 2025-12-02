@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ServiceTicketsService } from './service-tickets.service';
 import { CreateServiceTicketDto } from './dto/create-service-ticket.dto';
 import { UpdateServiceTicketDto } from './dto/update-service-ticket.dto';
@@ -7,7 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @Controller('service-tickets')
 @UseGuards(JwtAuthGuard)
 export class ServiceTicketsController {
-  constructor(private readonly serviceTicketsService: ServiceTicketsService) { }
+  constructor(private readonly serviceTicketsService: ServiceTicketsService) {}
 
   @Post()
   create(@Body() createServiceTicketDto: CreateServiceTicketDto) {
@@ -25,7 +34,10 @@ export class ServiceTicketsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceTicketDto: UpdateServiceTicketDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateServiceTicketDto: UpdateServiceTicketDto,
+  ) {
     return this.serviceTicketsService.update(+id, updateServiceTicketDto);
   }
 

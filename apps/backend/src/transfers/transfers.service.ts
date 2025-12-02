@@ -6,26 +6,33 @@ import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class TransfersService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
   async create(createTransferDto: CreateTransferDto) {
-    const { sourceBranchId, targetBranchId, productId, quantity } = createTransferDto;
+    const { sourceBranchId, targetBranchId, productId, quantity } =
+      createTransferDto;
 
     return this.prisma.$transaction(async (prisma) => {
       // 1. Validate Product
-      const product = await prisma.product.findUnique({ where: { id: productId } });
+      const product = await prisma.product.findUnique({
+        where: { id: productId },
+      });
       if (!product) throw new BadRequestException('Product not found');
 
       // 2. Deduct from Source
       if (sourceBranchId) {
         // Source is a Branch
         const sourceStock = await prisma.branchStock.findUnique({
-          where: { branchId_productId: { branchId: sourceBranchId, productId } },
+          where: {
+            branchId_productId: { branchId: sourceBranchId, productId },
+          },
         });
         if (!sourceStock || sourceStock.quantity < quantity) {
           throw new BadRequestException('Insufficient stock at source branch');
         }
         await prisma.branchStock.update({
-          where: { branchId_productId: { branchId: sourceBranchId, productId } },
+          where: {
+            branchId_productId: { branchId: sourceBranchId, productId },
+          },
           data: { quantity: { decrement: quantity } },
         });
       } else {
@@ -43,7 +50,9 @@ export class TransfersService {
       if (targetBranchId) {
         // Target is a Branch
         await prisma.branchStock.upsert({
-          where: { branchId_productId: { branchId: targetBranchId, productId } },
+          where: {
+            branchId_productId: { branchId: targetBranchId, productId },
+          },
           create: { branchId: targetBranchId, productId, quantity },
           update: { quantity: { increment: quantity } },
         });
@@ -82,7 +91,8 @@ export class TransfersService {
     });
   }
 
-  update(id: number, updateTransferDto: UpdateTransferDto) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  update(id: number, _updateTransferDto: UpdateTransferDto) {
     return `This action updates a #${id} transfer`;
   }
 

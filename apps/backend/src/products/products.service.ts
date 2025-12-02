@@ -6,7 +6,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   create(createProductDto: CreateProductDto) {
     return this.prisma.product.create({
@@ -38,10 +38,10 @@ export class ProductsService {
     const lowStockProducts = await this.prisma.product.findMany({
       where: {
         stockQuantity: {
-          lte: this.prisma.product.fields.lowStockThreshold
+          lte: this.prisma.product.fields.lowStockThreshold,
         },
-        autoReorder: true
-      }
+        autoReorder: true,
+      },
     });
 
     if (lowStockProducts.length === 0) return;
@@ -49,20 +49,27 @@ export class ProductsService {
     // Group by default supplier (assuming ID 1 for MVP or we could add supplierId to Product)
     // For now, we'll create one Draft PO for Supplier 1 containing all items
     const defaultSupplierId = 1;
-    const supplierExists = await this.prisma.supplier.findUnique({ where: { id: defaultSupplierId } });
+    const supplierExists = await this.prisma.supplier.findUnique({
+      where: { id: defaultSupplierId },
+    });
 
     if (!supplierExists) {
-      console.warn('Automated Reordering: Default Supplier (ID 1) not found. Skipping PO creation.');
+      console.warn(
+        'Automated Reordering: Default Supplier (ID 1) not found. Skipping PO creation.',
+      );
       return;
     }
 
-    const poItems = lowStockProducts.map(product => ({
+    const poItems = lowStockProducts.map((product) => ({
       productId: product.id,
       quantity: product.reorderQuantity,
-      unitCost: product.costPrice
+      unitCost: product.costPrice,
     }));
 
-    const totalAmount = poItems.reduce((sum, item) => sum + (Number(item.quantity) * Number(item.unitCost)), 0);
+    const totalAmount = poItems.reduce(
+      (sum, item) => sum + Number(item.quantity) * Number(item.unitCost),
+      0,
+    );
 
     await this.prisma.purchaseOrder.create({
       data: {
@@ -71,11 +78,13 @@ export class ProductsService {
         supplierId: defaultSupplierId,
         totalAmount: totalAmount,
         items: {
-          create: poItems
-        }
-      }
+          create: poItems,
+        },
+      },
     });
 
-    console.log(`Automated Reordering: Created Draft PO for ${lowStockProducts.length} items.`);
+    console.log(
+      `Automated Reordering: Created Draft PO for ${lowStockProducts.length} items.`,
+    );
   }
 }

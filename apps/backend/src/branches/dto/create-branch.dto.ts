@@ -1,6 +1,6 @@
 export class CreateBranchDto {
-    name: string;
-    location: string;
-    contactPerson?: string;
-    phone?: string;
+  name: string;
+  location: string;
+  contactPerson?: string;
+  phone?: string;
 }

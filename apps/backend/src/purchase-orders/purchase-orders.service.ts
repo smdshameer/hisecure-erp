@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
@@ -5,13 +6,16 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PurchaseOrdersService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createPurchaseOrderDto: CreatePurchaseOrderDto) {
     const { supplierId, items } = createPurchaseOrderDto;
 
     // Calculate total
-    const totalAmount = items.reduce((sum, item) => sum + (item.unitCost * item.quantity), 0);
+    const totalAmount = items.reduce(
+      (sum, item) => sum + item.unitCost * item.quantity,
+      0,
+    );
     const poNumber = `PO-${Date.now()}`;
 
     return this.prisma.purchaseOrder.create({
@@ -20,7 +24,7 @@ export class PurchaseOrdersService {
         totalAmount,
         supplierId,
         items: {
-          create: items.map(item => ({
+          create: items.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
             unitCost: item.unitCost,
@@ -57,7 +61,8 @@ export class PurchaseOrdersService {
       });
 
       if (!po) throw new BadRequestException('PO not found');
-      if (po.status === 'RECEIVED') throw new BadRequestException('PO already received');
+      if (po.status === 'RECEIVED')
+        throw new BadRequestException('PO already received');
 
       // Update Stock
       for (const item of po.items) {

@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class BranchesService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
   create(createBranchDto: CreateBranchDto) {
     return this.prisma.branch.create({
       data: createBranchDto,

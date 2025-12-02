@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ServiceTicketsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   create(createServiceTicketDto: CreateServiceTicketDto) {
     return this.prisma.serviceTicket.create({

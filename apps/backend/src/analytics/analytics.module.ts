@@ -4,8 +4,8 @@ import { AnalyticsController } from './analytics.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-    imports: [PrismaModule],
-    controllers: [AnalyticsController],
-    providers: [AnalyticsService],
+  imports: [PrismaModule],
+  controllers: [AnalyticsController],
+  providers: [AnalyticsService],
 })
-export class AnalyticsModule { }
+export class AnalyticsModule {}

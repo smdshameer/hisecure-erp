@@ -6,10 +6,13 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(createUserDto.password || 'password123', 10);
+    const hashedPassword = await bcrypt.hash(
+      createUserDto.password || 'password123',
+      10,
+    );
     return this.prisma.user.create({
       data: {
         ...createUserDto,
@@ -35,7 +38,7 @@ export class UsersService {
         password: true,
         name: true,
         role: true,
-      }
+      },
     });
   }
 
