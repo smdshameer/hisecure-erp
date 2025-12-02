@@ -24,8 +24,9 @@ export default function DashboardPage() {
     const fetchDashboardData = async () => {
         try {
             const token = localStorage.getItem('token');
-            // Use port 3005 for backend
-            const response = await axios.get('http://localhost:3005/analytics/dashboard', {
+            // Use environment variable for backend
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
+            const response = await axios.get(`${apiUrl}/analytics/dashboard`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setData(response.data);

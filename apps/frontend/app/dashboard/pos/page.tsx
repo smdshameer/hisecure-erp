@@ -33,7 +33,8 @@ export default function POSPage() {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/products');
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
+            const response = await axios.get(`${apiUrl}/products`);
             setProducts(response.data);
         } catch (error) {
             console.error('Failed to fetch products', error);
@@ -97,9 +98,10 @@ export default function POSPage() {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
             // Use port 3005
             await axios.post(
-                'http://localhost:3005/sales',
+                `${apiUrl}/sales`,
                 {
                     paymentMethod,
                     items: cart.map((item) => ({

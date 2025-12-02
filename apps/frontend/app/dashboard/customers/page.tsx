@@ -36,7 +36,8 @@ export default function CustomersPage() {
     const fetchCustomers = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:3005/customers', {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
+            const response = await axios.get(`${apiUrl}/customers`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setCustomers(response.data);
@@ -78,7 +79,8 @@ export default function CustomersPage() {
     const createCustomer = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:3005/customers', customerForm, {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
+            await axios.post(`${apiUrl}/customers`, customerForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowModal(false);
@@ -99,7 +101,8 @@ export default function CustomersPage() {
         if (!editingCustomer) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.patch(`http://localhost:3005/customers/${editingCustomer.id}`, customerForm, {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
+            await axios.patch(`${apiUrl}/customers/${editingCustomer.id}`, customerForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowModal(false);
@@ -122,7 +125,8 @@ export default function CustomersPage() {
         try {
             const token = localStorage.getItem('token');
             console.log('Token:', token ? 'Found' : 'Missing');
-            const response = await axios.delete(`http://localhost:3005/customers/${id}`, {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
+            const response = await axios.delete(`${apiUrl}/customers/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             console.log('Delete response:', response.data);
