@@ -79,6 +79,9 @@ model Product {
 
   branchStocks   BranchStock[]
   stockTransfers StockTransfer[]
+
+  autoReorder    Boolean  @default(false)
+  reorderQuantity Int     @default(10)
 }
 
 model Sale {

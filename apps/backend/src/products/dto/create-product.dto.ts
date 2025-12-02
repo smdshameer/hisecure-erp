@@ -49,4 +49,12 @@ export class CreateProductDto {
     @IsNumber()
     @Min(0)
     gstRate?: number;
+
+    @IsOptional()
+    autoReorder?: boolean;
+
+    @IsOptional()
+    @IsInt()
+    @Min(1)
+    reorderQuantity?: number;
 }
