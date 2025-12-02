@@ -42,7 +42,8 @@ export default function InventoryPage() {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/products');
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
+            const response = await axios.get(`${apiUrl}/products`);
             setProducts(response.data);
         } catch (error) {
             console.error('Failed to fetch products', error);
@@ -64,7 +65,8 @@ export default function InventoryPage() {
                 warrantyMonths: Number(formData.warrantyMonths),
                 gstRate: Number(formData.gstRate)
             };
-            await axios.post('http://localhost:3000/products', payload, {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
+            await axios.post(`${apiUrl}/products`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowModal(false);
