@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import styles from './login.module.css';
@@ -11,6 +11,14 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        // Warm up the backend connection on page load
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3005';
+        axios.get(apiUrl).catch(() => {
+            // Ignore errors, just trying to wake up the server/DB
+        });
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
