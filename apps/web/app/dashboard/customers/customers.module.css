@@ -7,11 +7,14 @@
     border-radius: 12px;
     border: 1px solid var(--border-color);
     overflow: hidden;
+    overflow-x: auto;
 }
 
 .table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 800px;
+    /* Ensure table doesn't squash on small screens */
 }
 
 .table th,
@@ -221,4 +224,10 @@
     opacity: 0.9;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
 }
