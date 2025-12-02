@@ -43,7 +43,7 @@ export default function LoginPage() {
             <div className={styles.card}>
                 <div className={styles.header}>
                     <h1 className={styles.title}>Hi Secure Solutions</h1>
-                    <p className={styles.subtitle}>Sign in to your ERP account</p>
+                    <p className={styles.subtitle}>Sign in to Hi Secure ERP</p>
                 </div>
 
                 {error && <div className={styles.error}>{error}</div>}
