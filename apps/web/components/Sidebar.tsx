@@ -19,6 +19,8 @@ const menuItems = [
     { name: 'Transfers', path: '/dashboard/transfers' },
     { name: 'CRM', path: '/dashboard/crm' },
     { name: 'Reports', path: '/dashboard/reports' },
+    { name: 'Sales & Invoices', path: '/dashboard/sales' },
+    { name: 'Quotations', path: '/dashboard/quotations' },
     { name: 'Settings', path: '/dashboard/settings' },
 ];
 
