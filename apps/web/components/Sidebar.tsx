@@ -8,6 +8,8 @@ import { useSidebar } from '../context/SidebarContext';
 const menuItems = [
     { name: 'Overview', path: '/dashboard' },
     { name: 'Inventory', path: '/dashboard/inventory' },
+    { name: 'Sales & Invoices', path: '/dashboard/sales' },
+    { name: 'Quotations', path: '/dashboard/quotations' },
     { name: 'Suppliers', path: '/dashboard/suppliers' },
     { name: 'Purchase Orders', path: '/dashboard/purchase-orders' },
     { name: 'Warranty', path: '/dashboard/warranty' },
@@ -19,8 +21,6 @@ const menuItems = [
     { name: 'Transfers', path: '/dashboard/transfers' },
     { name: 'CRM', path: '/dashboard/crm' },
     { name: 'Reports', path: '/dashboard/reports' },
-    { name: 'Sales & Invoices', path: '/dashboard/sales' },
-    { name: 'Quotations', path: '/dashboard/quotations' },
     { name: 'Settings', path: '/dashboard/settings' },
 ];
 
