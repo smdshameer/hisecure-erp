@@ -64,6 +64,11 @@ export default function SalesPage() {
         <>
             <Header title="Sales & Invoices" />
             <div className={styles.container}>
+                <div className={styles.actions}>
+                    <a href="/dashboard/sales/create" className={styles.downloadBtn} style={{ textDecoration: 'none', background: 'var(--primary-color)' }}>
+                        + Create Invoice
+                    </a>
+                </div>
                 <div className={styles.tableContainer}>
                     <table className={styles.table}>
                         <thead>
