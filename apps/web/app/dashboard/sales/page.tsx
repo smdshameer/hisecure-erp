@@ -1,13 +1,7 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-
-// ... (inside component)
-<div className={styles.actions}>
-    <Link href="/dashboard/sales/create" className={styles.downloadBtn} style={{ textDecoration: 'none', background: 'var(--primary-color)', padding: '10px 20px', display: 'inline-block' }}>
-        + New Invoice
-    </Link>
-</div>
 import axios from 'axios';
 import Header from '../../../components/Header';
 import styles from './sales.module.css';
@@ -32,9 +26,6 @@ export default function SalesPage() {
     const fetchSales = async () => {
         try {
             const token = localStorage.getItem('token');
-            // Assuming there's an endpoint to get all sales. 
-            // If not, we might need to use the reports endpoint or create a new one.
-            // Based on previous exploration, there is a SalesController.
             const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/sales`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -70,13 +61,27 @@ export default function SalesPage() {
     return (
         <>
             <Header title="Sales & Invoices" />
-            <div className={styles.container}>
-                <div className={styles.actions}>
-                    <div className={styles.actions}>
-                        <Link href="/dashboard/sales/create" className={styles.downloadBtn} style={{ textDecoration: 'none', background: 'var(--primary-color)', padding: '10px 20px', display: 'inline-block' }}>
-                            + New Invoice
-                        </Link>
-                    </div>
+            <div className={styles.container} style={{ border: '2px solid red', marginTop: '20px' }}>
+                <div className={styles.actions} style={{ border: '2px solid blue', padding: '10px', minHeight: '50px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                    <span style={{ color: 'red', fontWeight: 'bold', marginRight: '10px' }}>DEBUG: ACTIONS AREA</span>
+                    <Link
+                        href="/dashboard/sales/create"
+                        className={styles.downloadBtn}
+                        style={{
+                            textDecoration: 'none',
+                            background: '#2563eb',
+                            color: 'white',
+                            padding: '12px 24px',
+                            display: 'inline-block',
+                            borderRadius: '8px',
+                            fontWeight: 'bold',
+                            zIndex: 9999,
+                            position: 'relative',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        + NEW INVOICE BUTTON
+                    </Link>
                 </div>
                 <div className={styles.tableContainer}>
                     <table className={styles.table}>
