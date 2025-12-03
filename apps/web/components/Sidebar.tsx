@@ -6,7 +6,8 @@ import styles from './Sidebar.module.css';
 import { useSidebar } from '../context/SidebarContext';
 
 const menuItems = [
-    { name: 'Overview', path: '/dashboard' },
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'CRM', path: '/dashboard/crm' },
     { name: 'Inventory', path: '/dashboard/inventory' },
     { name: 'Sales & Invoices', path: '/dashboard/sales' },
     { name: 'Quotations', path: '/dashboard/quotations' },
@@ -19,7 +20,6 @@ const menuItems = [
     { name: 'Customers', path: '/dashboard/customers' },
     { name: 'Branches', path: '/dashboard/branches' },
     { name: 'Transfers', path: '/dashboard/transfers' },
-    { name: 'CRM', path: '/dashboard/crm' },
     { name: 'Reports', path: '/dashboard/reports' },
     { name: 'Settings', path: '/dashboard/settings' },
 ];
