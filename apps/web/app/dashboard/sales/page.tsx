@@ -1,6 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import Link from 'next/link';
+
+// ... (inside component)
+<div className={styles.actions}>
+    <Link href="/dashboard/sales/create" className={styles.downloadBtn} style={{ textDecoration: 'none', background: 'var(--primary-color)', padding: '10px 20px', display: 'inline-block' }}>
+        + New Invoice
+    </Link>
+</div>
 import axios from 'axios';
 import Header from '../../../components/Header';
 import styles from './sales.module.css';
@@ -65,9 +72,11 @@ export default function SalesPage() {
             <Header title="Sales & Invoices" />
             <div className={styles.container}>
                 <div className={styles.actions}>
-                    <a href="/dashboard/sales/create" className={styles.downloadBtn} style={{ textDecoration: 'none', background: 'var(--primary-color)', padding: '10px 20px', display: 'inline-block' }}>
-                        + New Invoice
-                    </a>
+                    <div className={styles.actions}>
+                        <Link href="/dashboard/sales/create" className={styles.downloadBtn} style={{ textDecoration: 'none', background: 'var(--primary-color)', padding: '10px 20px', display: 'inline-block' }}>
+                            + New Invoice
+                        </Link>
+                    </div>
                 </div>
                 <div className={styles.tableContainer}>
                     <table className={styles.table}>
