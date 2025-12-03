@@ -75,32 +75,40 @@ export default function SalesPage() {
                     <table className={styles.table}>
                         <thead>
                             <tr>
-                                <tbody>
-                                    {loading ? (
-                                        <tr><td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>Loading...</td></tr>
-                                    ) : sales.length === 0 ? (
-                                        <tr><td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>No sales found</td></tr>
-                                    ) : sales.map((sale) => (
-                                        <tr key={sale.id}>
-                                            <td>{sale.invoiceNo}</td>
-                                            <td>{new Date(sale.createdAt).toLocaleDateString()}</td>
-                                            <td>{sale.customerName || 'Walk-in'}</td>
-                                            <td>₹{Number(sale.totalAmount).toFixed(2)}</td>
-                                            <td>{sale.paymentMethod}</td>
-                                            <td>
-                                                <button
-                                                    className={styles.downloadBtn}
-                                                    onClick={() => downloadInvoice(sale.id, sale.invoiceNo)}
-                                                >
-                                                    Download Invoice
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table >
-                        </div >
-                </div >
-            </>
-            );
+                                <th>Invoice No</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Payment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr><td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>Loading...</td></tr>
+                            ) : sales.length === 0 ? (
+                                <tr><td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>No sales found</td></tr>
+                            ) : sales.map((sale) => (
+                                <tr key={sale.id}>
+                                    <td>{sale.invoiceNo}</td>
+                                    <td>{new Date(sale.createdAt).toLocaleDateString()}</td>
+                                    <td>{sale.customerName || 'Walk-in'}</td>
+                                    <td>₹{Number(sale.totalAmount).toFixed(2)}</td>
+                                    <td>{sale.paymentMethod}</td>
+                                    <td>
+                                        <button
+                                            className={styles.downloadBtn}
+                                            onClick={() => downloadInvoice(sale.id, sale.invoiceNo)}
+                                        >
+                                            Download Invoice
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </>
+    );
 }
