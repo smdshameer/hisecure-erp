@@ -9,7 +9,7 @@ export class InteractionsController {
     constructor(private readonly interactionsService: InteractionsService) { }
 
     @Post()
-    create(@Request() req, @Body() createInteractionDto: CreateInteractionDto) {
+    create(@Request() req: any, @Body() createInteractionDto: CreateInteractionDto) {
         return this.interactionsService.create(req.user.userId, createInteractionDto);
     }
 
