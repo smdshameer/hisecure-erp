@@ -49,6 +49,13 @@ export default function CustomerListPage() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ccc', width: '300px' }}
                     />
+                    <button
+                        className={styles.primaryBtn}
+                        onClick={() => alert('Add Customer Modal to be implemented')}
+                        style={{ marginLeft: 'auto' }}
+                    >
+                        + Add Customer
+                    </button>
                 </div>
                 <div className={styles.tableContainer}>
                     <table className={styles.table}>
