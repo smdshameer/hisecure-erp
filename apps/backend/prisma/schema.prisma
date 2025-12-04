@@ -50,6 +50,7 @@ model Customer {
   interactions Interaction[]
   followUps    FollowUp[]
   complaints   Complaint[]
+  quotations   Quotation[]
 }
 
 model Product {
@@ -71,6 +72,7 @@ model Product {
   saleItems      SaleItem[]
   ticketParts    TicketPart[]
   purchaseItems  PurchaseOrderItem[]
+  quotationItems QuotationItem[]
   warrantyMonths Int      @default(0) // 0 means no warranty
 
   branchStocks   BranchStock[]
@@ -320,4 +322,35 @@ model Complaint {
 
   customerId  Int
   customer    Customer @relation(fields: [customerId], references: [id])
+}
+
+model Quotation {
+  id          Int      @id @default(autoincrement())
+  quotationNo String   @unique
+  status      String   @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
+  subTotal    Decimal  @default(0)
+  cgst        Decimal  @default(0)
+  sgst        Decimal  @default(0)
+  igst        Decimal  @default(0)
+  totalAmount Decimal
+  validUntil  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  customerId  Int
+  customer    Customer @relation(fields: [customerId], references: [id])
+  
+  items       QuotationItem[]
+}
+
+model QuotationItem {
+  id        Int      @id @default(autoincrement())
+  quantity  Int
+  unitPrice Decimal
+  
+  quotationId Int
+  quotation   Quotation @relation(fields: [quotationId], references: [id])
+  
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
 }

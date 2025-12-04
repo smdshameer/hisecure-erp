@@ -120,7 +120,7 @@ export default function BranchesPage() {
                                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                     />
                                 </div>
-                                <div className={styles.actions}>
+                                <div className={styles.modalActions}>
                                     <button type="button" onClick={() => setIsModalOpen(false)} className={styles.cancelButton}>
                                         Cancel
                                     </button>

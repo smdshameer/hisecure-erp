@@ -14,6 +14,8 @@ export default function CustomerListPage() {
     const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', email: '', segment: 'General' });
     const router = useRouter();
 
+    const [editingId, setEditingId] = useState<number | null>(null);
+
     useEffect(() => {
         fetchCustomers();
     }, []);
@@ -32,20 +34,47 @@ export default function CustomerListPage() {
         }
     };
 
-    const handleAddCustomer = async (e: React.FormEvent) => {
+    const handleSaveCustomer = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers`, newCustomer, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+            if (editingId) {
+                await axios.patch(`${apiUrl}/customers/${editingId}`, newCustomer, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            } else {
+                await axios.post(`${apiUrl}/customers`, newCustomer, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            }
+
             setIsModalOpen(false);
             setNewCustomer({ name: '', phone: '', email: '', segment: 'General' });
+            setEditingId(null);
             fetchCustomers();
         } catch (error) {
-            console.error('Failed to add customer', error);
-            alert('Failed to add customer');
+            console.error('Failed to save customer', error);
+            alert('Failed to save customer');
         }
+    };
+
+    const openEditModal = (customer: any) => {
+        setNewCustomer({
+            name: customer.name,
+            phone: customer.phone,
+            email: customer.email || '',
+            segment: customer.segment || 'General'
+        });
+        setEditingId(customer.id);
+        setIsModalOpen(true);
+    };
+
+    const openAddModal = () => {
+        setNewCustomer({ name: '', phone: '', email: '', segment: 'General' });
+        setEditingId(null);
+        setIsModalOpen(true);
     };
 
     const filteredCustomers = customers.filter((c: any) =>
@@ -69,7 +98,7 @@ export default function CustomerListPage() {
                     />
                     <button
                         className={styles.primaryBtn}
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={openAddModal}
                         style={{ marginLeft: 'auto' }}
                     >
                         + Add Customer
@@ -107,6 +136,13 @@ export default function CustomerListPage() {
                                     <td>
                                         <button
                                             className={styles.actionBtn}
+                                            onClick={() => openEditModal(c)}
+                                            style={{ marginRight: '0.5rem', background: '#e5e7eb', color: '#374151' }}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className={styles.actionBtn}
                                             onClick={() => router.push(`/dashboard/crm/customers/${c.id}`)}
                                         >
                                             View 360°
@@ -119,15 +155,15 @@ export default function CustomerListPage() {
                 </div>
             </div>
 
-            {/* Add Customer Modal */}
+            {/* Add/Edit Customer Modal */}
             {isModalOpen && (
                 <div style={{
                     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
                     background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
                 }}>
                     <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', width: '400px' }}>
-                        <h2 style={{ marginBottom: '1.5rem' }}>Add New Customer</h2>
-                        <form onSubmit={handleAddCustomer}>
+                        <h2 style={{ marginBottom: '1.5rem' }}>{editingId ? 'Edit Customer' : 'Add New Customer'}</h2>
+                        <form onSubmit={handleSaveCustomer}>
                             <div style={{ marginBottom: '1rem' }}>
                                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>Name</label>
                                 <input
@@ -181,7 +217,7 @@ export default function CustomerListPage() {
                                     type="submit"
                                     className={styles.primaryBtn}
                                 >
-                                    Save Customer
+                                    {editingId ? 'Update Customer' : 'Save Customer'}
                                 </button>
                             </div>
                         </form>

@@ -6,4 +6,6 @@ export class CreateUserDto {
   name: string;
   role?: string;
   branch?: string;
+  gstin?: string;
+  state?: string;
 }

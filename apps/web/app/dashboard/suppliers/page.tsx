@@ -20,6 +20,7 @@ export default function SuppliersPage() {
     const [suppliers, setSuppliers] = useState<Supplier[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [editingId, setEditingId] = useState<number | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         contactPerson: '',
@@ -48,19 +49,43 @@ export default function SuppliersPage() {
         }
     };
 
+    const handleEdit = (supplier: Supplier) => {
+        setEditingId(supplier.id);
+        setFormData({
+            name: supplier.name,
+            contactPerson: supplier.contactPerson || '',
+            email: supplier.email || '',
+            phone: supplier.phone || '',
+            address: supplier.address || '',
+            gstin: supplier.gstin || '',
+            state: supplier.state || ''
+        });
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setEditingId(null);
+        setFormData({ name: '', contactPerson: '', email: '', phone: '', address: '', gstin: '', state: '' });
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/suppliers`, formData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setShowModal(false);
-            setFormData({ name: '', contactPerson: '', email: '', phone: '', address: '', gstin: '', state: '' });
+            const headers = { Authorization: `Bearer ${token}` };
+
+            if (editingId) {
+                await axios.patch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/suppliers/${editingId}`, formData, { headers });
+            } else {
+                await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/suppliers`, formData, { headers });
+            }
+
+            handleCloseModal();
             fetchSuppliers();
         } catch (error) {
-            console.error('Failed to create supplier', error);
-            alert('Failed to create supplier');
+            console.error('Failed to save supplier', error);
+            alert('Failed to save supplier');
         }
     };
 
@@ -98,7 +123,12 @@ export default function SuppliersPage() {
                                     <td>{supplier.address || '-'}</td>
                                     <td>{supplier.gstin || '-'}</td>
                                     <td>
-                                        <button className={styles.actionBtn}>Edit</button>
+                                        <button
+                                            className={styles.actionBtn}
+                                            onClick={() => handleEdit(supplier)}
+                                        >
+                                            Edit
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -110,7 +140,7 @@ export default function SuppliersPage() {
             {showModal && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modal}>
-                        <h2>Add New Supplier</h2>
+                        <h2>{editingId ? 'Edit Supplier' : 'Add New Supplier'}</h2>
                         <form onSubmit={handleSubmit}>
                             <div className={styles.formGroup}>
                                 <label>Company Name</label>
@@ -172,8 +202,8 @@ export default function SuppliersPage() {
                                 />
                             </div>
                             <div className={styles.modalActions}>
-                                <button type="button" className={styles.cancelBtn} onClick={() => setShowModal(false)}>Cancel</button>
-                                <button type="submit" className={styles.submitBtn}>Create Supplier</button>
+                                <button type="button" className={styles.cancelBtn} onClick={handleCloseModal}>Cancel</button>
+                                <button type="submit" className={styles.submitBtn}>{editingId ? 'Update' : 'Create'} Supplier</button>
                             </div>
                         </form>
                     </div>

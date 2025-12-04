@@ -30,6 +30,8 @@ import { FollowUpsService } from './crm/followups.service';
 import { ComplaintsController } from './crm/complaints.controller';
 import { ComplaintsService } from './crm/complaints.service';
 
+import { QuotationsModule } from './quotations/quotations.module';
+
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -52,6 +54,7 @@ import { ComplaintsService } from './crm/complaints.service';
     BranchesModule,
     TransfersModule,
     AnalyticsModule,
+    QuotationsModule,
   ],
   controllers: [
     AppController,

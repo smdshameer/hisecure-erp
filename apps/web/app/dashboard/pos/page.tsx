@@ -138,20 +138,26 @@ export default function POSPage() {
                         onChange={(e) => setSearch(e.target.value)}
                     />
                     <div className={styles.grid}>
-                        {filteredProducts.map((product) => (
-                            <div
-                                key={product.id}
-                                className={styles.card}
-                                onClick={() => addToCart(product)}
-                            >
-                                <div className={styles.cardHeader}>
-                                    <span className={styles.sku}>{product.sku}</span>
-                                    <span className={styles.stock}>{product.stockQuantity} in stock</span>
-                                </div>
-                                <h3 className={styles.productName}>{product.name}</h3>
-                                <p className={styles.price}>₹{product.price} <span style={{ fontSize: '0.8em', color: '#666' }}>+ {product.gstRate}% GST</span></p>
+                        {filteredProducts.length === 0 ? (
+                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '2rem', color: '#666' }}>
+                                {products.length === 0 ? 'No products found in inventory.' : 'No products match your search.'}
                             </div>
-                        ))}
+                        ) : (
+                            filteredProducts.map((product) => (
+                                <div
+                                    key={product.id}
+                                    className={styles.card}
+                                    onClick={() => addToCart(product)}
+                                >
+                                    <div className={styles.cardHeader}>
+                                        <span className={styles.sku}>{product.sku}</span>
+                                        <span className={styles.stock}>{product.stockQuantity} in stock</span>
+                                    </div>
+                                    <h3 className={styles.productName}>{product.name}</h3>
+                                    <p className={styles.price}>₹{product.price} <span style={{ fontSize: '0.8em', color: '#666' }}>+ {product.gstRate}% GST</span></p>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
 
