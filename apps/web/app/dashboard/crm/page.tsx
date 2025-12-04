@@ -54,17 +54,17 @@ export default function CRMDashboard() {
                     <div className={styles.statCard}>
                         <h3>Total Customers</h3>
                         <div className={styles.statValue}>{stats.totalCustomers}</div>
-                        <Link href="/dashboard/crm/customers" className={styles.statLink}>View All</Link>
+                        <Link href="/dashboard/crm/customers" className={styles.statLink}>View All Customers →</Link>
                     </div>
                     <div className={styles.statCard}>
                         <h3>Pending Follow-ups</h3>
                         <div className={styles.statValue}>{stats.pendingFollowUps}</div>
-                        <div className={styles.statSub}>Tasks for today</div>
+                        <div className={styles.statSub}>📅 Tasks for today</div>
                     </div>
                     <div className={styles.statCard}>
                         <h3>Open Complaints</h3>
                         <div className={styles.statValue}>{stats.openComplaints}</div>
-                        <div className={styles.statSub}>Requires attention</div>
+                        <div className={styles.statSub}>⚠️ Requires attention</div>
                     </div>
                 </div>
 
