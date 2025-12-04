@@ -79,14 +79,10 @@ export default function CustomerListPage() {
                                     <td>{c.phone}</td>
                                     <td>{c.email || '-'}</td>
                                     <td>
-                                        <span style={{
-                                            padding: '2px 8px',
-                                            borderRadius: '12px',
-                                            background: '#e0e7ff',
-                                            color: '#3730a3',
-                                            fontSize: '0.75rem',
-                                            fontWeight: '500'
-                                        }}>
+                                        <span className={`${styles.badge} ${c.segment === 'VIP' ? styles.badgeYellow :
+                                                c.segment === 'New' ? styles.badgeGreen :
+                                                    styles.badgeBlue
+                                            }`}>
                                             {c.segment || 'General'}
                                         </span>
                                     </td>

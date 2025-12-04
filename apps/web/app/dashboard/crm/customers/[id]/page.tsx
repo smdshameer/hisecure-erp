@@ -66,44 +66,37 @@ export default function Customer360Page() {
             <Header title={`Customer: ${customer.name}`} />
             <div className={styles.container}>
                 {/* Header Card */}
-                <div className={styles.section} style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className={styles.profileHeader}>
                     <div>
-                        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{customer.name}</h2>
-                        <div style={{ color: '#666' }}>
-                            <span>{customer.phone}</span> • <span>{customer.email}</span>
+                        <h2 className={styles.profileName}>{customer.name}</h2>
+                        <div className={styles.profileMeta}>
+                            <span>📞 {customer.phone}</span>
+                            <span>✉️ {customer.email}</span>
+                            <span className={`${styles.badge} ${styles.badgeBlue}`}>{customer.segment || 'General'}</span>
                         </div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>
+                    <div>
+                        <div className={styles.ltvValue}>
                             ₹{Number(insights?.totalSpend || 0).toLocaleString()}
                         </div>
-                        <div style={{ fontSize: '0.875rem', color: '#666' }}>Total Lifetime Value</div>
+                        <div className={styles.ltvLabel}>Total Lifetime Value</div>
                     </div>
                 </div>
 
                 {/* Quick Actions */}
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-                    <button className={styles.actionBtn} onClick={() => window.open(`tel:${customer.phone}`)}>📞 Call</button>
-                    <button className={styles.actionBtn} style={{ background: '#25D366' }} onClick={() => window.open(`https://wa.me/${customer.phone}`)}>💬 WhatsApp</button>
-                    <button className={styles.actionBtn} style={{ background: '#EA4335' }} onClick={() => window.open(`mailto:${customer.email}`)}>✉️ Email</button>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+                    <button className={styles.primaryBtn} onClick={() => window.open(`tel:${customer.phone}`)}>📞 Call Customer</button>
+                    <button className={styles.actionBtn} onClick={() => window.open(`https://wa.me/${customer.phone}`)}>💬 WhatsApp</button>
+                    <button className={styles.actionBtn} onClick={() => window.open(`mailto:${customer.email}`)}>✉️ Send Email</button>
                 </div>
 
                 {/* Tabs */}
-                <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb', marginBottom: '1.5rem' }}>
+                <div className={styles.tabs}>
                     {['timeline', 'interactions', 'sales', 'tickets', 'follow_ups', 'complaints'].map(tab => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            style={{
-                                padding: '0.75rem 1.5rem',
-                                border: 'none',
-                                background: 'none',
-                                borderBottom: activeTab === tab ? '2px solid #2563eb' : 'none',
-                                color: activeTab === tab ? '#2563eb' : '#666',
-                                fontWeight: 500,
-                                cursor: 'pointer',
-                                textTransform: 'capitalize'
-                            }}
+                            className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ''}`}
                         >
                             {tab.replace('_', ' ')}
                         </button>
