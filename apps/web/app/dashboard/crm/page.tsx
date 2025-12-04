@@ -48,7 +48,7 @@ export default function CRMDashboard() {
 
     return (
         <>
-            <Header title="CRM Dashboard" />
+            <Header title="CRM Dashboard v2.0" />
             <div className={styles.container}>
                 <div className={styles.statsGrid}>
                     <div className={styles.statCard}>
