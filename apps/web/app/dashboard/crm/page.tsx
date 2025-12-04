@@ -68,6 +68,26 @@ export default function CRMDashboard() {
                     </div>
                 </div>
 
+                <div className={styles.section} style={{ padding: '1.5rem', marginBottom: '2rem' }}>
+                    <div className={styles.sectionHeader} style={{ padding: '0 0 1rem 0', marginBottom: '1rem' }}>
+                        <h2>Quick Actions</h2>
+                    </div>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                        <button
+                            className={styles.primaryBtn}
+                            onClick={() => router.push('/dashboard/crm/customers')}
+                        >
+                            👥 Customer Master
+                        </button>
+                        <button
+                            className={styles.actionBtn}
+                            onClick={() => alert('Add Customer Modal')}
+                        >
+                            + Add Customer
+                        </button>
+                    </div>
+                </div>
+
                 <div className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2>Upcoming Follow-ups</h2>
