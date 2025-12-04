@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @Controller('customers')
 @UseGuards(JwtAuthGuard)
 export class CustomersController {
-  constructor(private readonly customersService: CustomersService) {}
+  constructor(private readonly customersService: CustomersService) { }
 
   @Post()
   create(@Body() createCustomerDto: CreateCustomerDto) {
@@ -44,5 +44,15 @@ export class CustomersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.customersService.remove(+id);
+  }
+
+  @Get(':id/timeline')
+  getTimeline(@Param('id') id: string) {
+    return this.customersService.getTimeline(+id);
+  }
+
+  @Get(':id/insights')
+  getInsights(@Param('id') id: string) {
+    return this.customersService.getInsights(+id);
   }
 }

@@ -1,45 +1,83 @@
 .container {
     padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-.addButton {
-    background: var(--accent-color);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9375rem;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
+.statCard {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.addButton:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.statCard h3 {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
 }
 
-.tableContainer {
+.statValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.statSub {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.statLink {
+    color: var(--primary-color);
+    font-size: 0.875rem;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.statLink:hover {
+    text-decoration: underline;
+}
+
+.section {
     background: var(--card-bg);
     border-radius: 12px;
     border: 1px solid var(--border-color);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.sectionHeader {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sectionHeader h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.tableContainer {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    max-width: 100%;
 }
 
 .table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
 }
 
 .table th,
@@ -50,51 +88,28 @@
 }
 
 .table th {
-    background: rgba(0, 0, 0, 0.2);
-    font-weight: 600;
+    background: var(--bg-secondary);
     color: var(--text-secondary);
+    font-weight: 500;
     font-size: 0.875rem;
 }
 
 .table td {
     color: var(--text-primary);
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
 }
 
-.table tr:last-child td {
-    border-bottom: none;
+.actionBtn {
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.2s;
 }
 
-.status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.statusNew {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-}
-
-.statusContacted {
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
-}
-
-.statusQualified {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-}
-
-.statusLost {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding: 1rem;
-    }
+.actionBtn:hover {
+    background: var(--primary-hover);
 }

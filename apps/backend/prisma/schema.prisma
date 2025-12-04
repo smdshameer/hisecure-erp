@@ -40,6 +40,8 @@ model User {
   
   sales     Sale[]
   tickets   ServiceTicket[]
+  interactions Interaction[]
+  assignedFollowUps FollowUp[]
 }
 
 model Customer {
@@ -50,10 +52,15 @@ model Customer {
   address   String?
   gstin     String?
   state     String?
+  segment   String?
+  notes     String?
   createdAt DateTime @default(now())
   
   sales     Sale[]
   tickets   ServiceTicket[]
+  interactions Interaction[]
+  followUps    FollowUp[]
+  complaints   Complaint[]
 }
 
 model Product {
@@ -290,4 +297,76 @@ model StockTransfer {
   
   targetBranchId Int?
   targetBranch   Branch?  @relation("TargetBranch", fields: [targetBranchId], references: [id])
+}
+
+// CRM Module Additions
+
+enum InteractionType {
+  CALL
+  VISIT
+  EMAIL
+  WHATSAPP
+}
+
+model Interaction {
+  id        Int      @id @default(autoincrement())
+  type      InteractionType
+  notes     String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+}
+
+enum FollowUpStatus {
+  PENDING
+  DONE
+  CANCELLED
+}
+
+model FollowUp {
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  description String
+  status      FollowUpStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  customerId  Int
+  customer    Customer @relation(fields: [customerId], references: [id])
+
+  assignedToId Int?
+  assignedTo   User? @relation(fields: [assignedToId], references: [id])
+}
+
+enum ComplaintStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum ComplaintPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Complaint {
+  id          Int      @id @default(autoincrement())
+  subject     String
+  description String
+  status      ComplaintStatus @default(OPEN)
+  priority    ComplaintPriority @default(MEDIUM)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  customerId  Int
+  customer    Customer @relation(fields: [customerId], references: [id])
 }

@@ -23,6 +23,13 @@ import { BranchesModule } from './branches/branches.module';
 import { TransfersModule } from './transfers/transfers.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 
+import { InteractionsController } from './crm/interactions.controller';
+import { InteractionsService } from './crm/interactions.service';
+import { FollowUpsController } from './crm/followups.controller';
+import { FollowUpsService } from './crm/followups.service';
+import { ComplaintsController } from './crm/complaints.controller';
+import { ComplaintsService } from './crm/complaints.service';
+
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -46,7 +53,17 @@ import { AnalyticsModule } from './analytics/analytics.module';
     TransfersModule,
     AnalyticsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [
+    AppController,
+    InteractionsController,
+    FollowUpsController,
+    ComplaintsController,
+  ],
+  providers: [
+    AppService,
+    InteractionsService,
+    FollowUpsService,
+    ComplaintsService,
+  ],
 })
-export class AppModule {}
+export class AppModule { }
