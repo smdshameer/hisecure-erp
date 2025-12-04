@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from '../../../components/Header';
-import styles from './crm.module.css';
+import styles from './crm-dashboard.module.css';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from '../../../../components/Header';
-import styles from '../crm.module.css';
+import styles from '../crm-dashboard.module.css';
 import { useRouter } from 'next/navigation';
 
 export default function CustomerListPage() {
@@ -80,8 +80,8 @@ export default function CustomerListPage() {
                                     <td>{c.email || '-'}</td>
                                     <td>
                                         <span className={`${styles.badge} ${c.segment === 'VIP' ? styles.badgeYellow :
-                                                c.segment === 'New' ? styles.badgeGreen :
-                                                    styles.badgeBlue
+                                            c.segment === 'New' ? styles.badgeGreen :
+                                                styles.badgeBlue
                                             }`}>
                                             {c.segment || 'General'}
                                         </span>
