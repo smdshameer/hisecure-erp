@@ -17,6 +17,13 @@ try {
     console.log('Running migrations...');
     execSync('npx prisma migrate deploy', { stdio: 'inherit', env: process.env });
 
+    console.log('Seeding database...');
+    try {
+        execSync('npx prisma db seed', { stdio: 'inherit', env: process.env });
+    } catch (seedError) {
+        console.warn('Seeding failed (non-fatal):', seedError.message);
+    }
+
     console.log('Starting application...');
     execSync('node dist/src/main', { stdio: 'inherit', env: process.env });
 } catch (error) {
