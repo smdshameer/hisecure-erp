@@ -37,7 +37,7 @@ export default function SuppliersPage() {
     const fetchSuppliers = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:3005/suppliers', {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/suppliers`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setSuppliers(response.data);
@@ -52,7 +52,7 @@ export default function SuppliersPage() {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:3005/suppliers', formData, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/suppliers`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowModal(false);

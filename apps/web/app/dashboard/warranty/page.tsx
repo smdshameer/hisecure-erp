@@ -36,7 +36,7 @@ export default function WarrantyPage() {
     const fetchClaims = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/warranty/claims`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/warranty/claims`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) {
@@ -55,7 +55,7 @@ export default function WarrantyPage() {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/warranty/claims/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/warranty/claims/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

@@ -47,7 +47,7 @@ export default function InventoryPage() {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/products');
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/products`);
             setProducts(response.data);
         } catch (error) {
             console.error('Failed to fetch products', error);
@@ -66,13 +66,13 @@ export default function InventoryPage() {
         setFormData({
             sku: product.sku,
             name: product.name,
-            category: product.category,
+            category: product.category || '',
             price: product.price,
             costPrice: product.costPrice,
             stockQuantity: product.stockQuantity,
             lowStockThreshold: product.lowStockThreshold,
             warrantyMonths: product.warrantyMonths,
-            hsnCode: product.hsnCode,
+            hsnCode: product.hsnCode || '',
             gstRate: product.gstRate,
             autoReorder: product.autoReorder,
             reorderQuantity: product.reorderQuantity
@@ -93,9 +93,9 @@ export default function InventoryPage() {
                 warrantyMonths: Number(formData.warrantyMonths),
                 gstRate: Number(formData.gstRate),
                 autoReorder: Boolean(formData.autoReorder),
-                reorderQuantity: Number(formData.reorderQuantity)
+                reorderQuantity: formData.autoReorder ? Number(formData.reorderQuantity) : undefined
             };
-            const apiUrl = 'http://localhost:3000';
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
             if (editingId) {
                 await axios.patch(`${apiUrl}/products/${editingId}`, payload, {

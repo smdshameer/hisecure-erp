@@ -1,5 +1,5 @@
 import { IsString, IsInt, IsOptional, IsEnum } from 'class-validator';
-import { TicketStatus } from '@prisma/client';
+
 
 export class CreateServiceTicketDto {
   @IsString()
@@ -9,8 +9,8 @@ export class CreateServiceTicketDto {
   customerId: number;
 
   @IsOptional()
-  @IsEnum(TicketStatus)
-  status?: TicketStatus;
+  @IsString()
+  status?: string;
 
   @IsOptional()
   @IsInt()

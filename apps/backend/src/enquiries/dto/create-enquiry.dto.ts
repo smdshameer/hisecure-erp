@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsEnum,
 } from 'class-validator';
-import { EnquiryStatus } from '@prisma/client';
+
 
 export class CreateEnquiryDto {
   @IsString()
@@ -21,6 +21,6 @@ export class CreateEnquiryDto {
   message: string;
 
   @IsOptional()
-  @IsEnum(EnquiryStatus)
-  status?: EnquiryStatus;
+  @IsString()
+  status?: string;
 }

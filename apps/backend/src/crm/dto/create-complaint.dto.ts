@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
-import { ComplaintStatus, ComplaintPriority } from '@prisma/client';
+
 
 export class CreateComplaintDto {
     @IsString()
@@ -8,8 +8,8 @@ export class CreateComplaintDto {
     @IsString()
     description: string;
 
-    @IsEnum(ComplaintPriority)
-    priority: ComplaintPriority;
+    @IsString()
+    priority: string;
 
     @IsInt()
     customerId: number;
@@ -17,12 +17,12 @@ export class CreateComplaintDto {
 
 export class UpdateComplaintDto {
     @IsOptional()
-    @IsEnum(ComplaintStatus)
-    status?: ComplaintStatus;
+    @IsString()
+    status?: string;
 
     @IsOptional()
-    @IsEnum(ComplaintPriority)
-    priority?: ComplaintPriority;
+    @IsString()
+    priority?: string;
 
     @IsOptional()
     @IsString()

@@ -97,3 +97,117 @@
 .actionBtn:hover {
     background: var(--primary-hover);
 }
+
+/* Missing Classes Added by Antigravity */
+
+.primaryBtn {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: opacity 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.primaryBtn:hover {
+    opacity: 0.9;
+}
+
+.searchInput {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badgeYellow {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.badgeGreen {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.badgeBlue {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--card-bg);
+}
+
+.tab {
+    padding: 1rem 0;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.activeTab {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.profileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.profileName {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.profileMeta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.ltvValue {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #059669;
+    text-align: right;
+}
+
+.ltvLabel {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: right;
+}

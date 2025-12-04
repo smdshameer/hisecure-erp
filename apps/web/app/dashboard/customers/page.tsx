@@ -39,7 +39,7 @@ export default function CustomersPage() {
     const fetchCustomers = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/customers`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setCustomers(response.data);
@@ -81,7 +81,7 @@ export default function CustomersPage() {
     const createCustomer = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/customers`, customerForm, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers`, customerForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowModal(false);
@@ -103,7 +103,7 @@ export default function CustomersPage() {
         if (!editingCustomer) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/customers/${editingCustomer.id}`, customerForm, {
+            await axios.patch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers/${editingCustomer.id}`, customerForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setShowModal(false);
@@ -123,7 +123,7 @@ export default function CustomersPage() {
         }
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/customers/${id}`, {
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchCustomers();

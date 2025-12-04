@@ -43,9 +43,9 @@ export default function TransfersPage() {
             const headers = { Authorization: `Bearer ${token}` };
 
             const [transfersRes, branchesRes, productsRes] = await Promise.all([
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/transfers`, { headers }),
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/branches`, { headers }),
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/transfers`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/branches`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/products`, { headers }),
             ]);
 
             setTransfers(transfersRes.data);
@@ -63,25 +63,52 @@ export default function TransfersPage() {
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!formData.productId) {
+            alert('Please select a product');
+            return;
+        }
+
+        if (Number(formData.quantity) < 1) {
+            alert('Quantity must be at least 1');
+            return;
+        }
+
+        const sourceId = formData.sourceBranchId ? Number(formData.sourceBranchId) : undefined;
+        const targetId = formData.targetBranchId ? Number(formData.targetBranchId) : undefined;
+
+        if (sourceId === targetId) {
+            alert('Source and Target locations cannot be the same');
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             const payload = {
-                sourceBranchId: formData.sourceBranchId ? Number(formData.sourceBranchId) : null,
-                targetBranchId: formData.targetBranchId ? Number(formData.targetBranchId) : null,
+                sourceBranchId: sourceId,
+                targetBranchId: targetId,
                 productId: Number(formData.productId),
                 quantity: Number(formData.quantity),
             };
 
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/transfers`, payload, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/transfers`, payload, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
             setIsModalOpen(false);
             setFormData({ sourceBranchId: '', targetBranchId: '', productId: '', quantity: '' });
             fetchData();
-        } catch (error) {
+            alert('Transfer successful!');
+        } catch (error: any) {
             console.error('Error creating transfer:', error);
-            alert('Transfer failed. Check stock levels.');
+            let message = 'Transfer failed.';
+            if (error.response?.data?.message) {
+                if (Array.isArray(error.response.data.message)) {
+                    message += '\n' + error.response.data.message.join('\n');
+                } else {
+                    message += ' ' + error.response.data.message;
+                }
+            }
+            alert(message);
         }
     };
 

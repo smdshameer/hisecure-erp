@@ -35,7 +35,7 @@ export default function CheckWarrantyPage() {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/warranty/check?invoice=${invoice}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/warranty/check?invoice=${invoice}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -60,7 +60,7 @@ export default function CheckWarrantyPage() {
         setSubmitting(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/warranty/claims', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/warranty/claims`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

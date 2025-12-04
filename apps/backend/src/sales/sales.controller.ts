@@ -26,7 +26,7 @@ export class SalesController {
     private readonly salesService: SalesService,
     private readonly pdfService: PdfService,
     private readonly mailService: MailService,
-  ) {}
+  ) { }
 
   @Post()
   async create(@Request() req: any, @Body() createSaleDto: CreateSaleDto) {
@@ -41,6 +41,11 @@ export class SalesController {
     }
 
     return sale;
+  }
+
+  @Get()
+  findAll() {
+    return this.salesService.findAll();
   }
 
   @Get(':id')

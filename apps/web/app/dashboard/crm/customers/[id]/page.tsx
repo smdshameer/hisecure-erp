@@ -26,9 +26,9 @@ export default function Customer360Page() {
             const headers = { Authorization: `Bearer ${token}` };
 
             const [custRes, timelineRes, insightsRes] = await Promise.all([
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/customers/${id}`, { headers }),
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/customers/${id}/timeline`, { headers }),
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/customers/${id}/insights`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers/${id}`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers/${id}/timeline`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers/${id}/insights`, { headers }),
             ]);
 
             setCustomer(custRes.data);
@@ -44,7 +44,7 @@ export default function Customer360Page() {
     const addInteraction = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/interactions`, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/interactions`, {
                 customerId: Number(id),
                 type: interactionType,
                 notes: interactionNote

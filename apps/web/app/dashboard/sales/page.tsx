@@ -26,7 +26,7 @@ export default function SalesPage() {
     const fetchSales = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/sales`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/sales`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setSales(response.data);
@@ -40,7 +40,7 @@ export default function SalesPage() {
     const downloadInvoice = async (saleId: number, invoiceNo: string) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/sales/${saleId}/invoice`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/sales/${saleId}/invoice`, {
                 headers: { Authorization: `Bearer ${token}` },
                 responseType: 'blob',
             });

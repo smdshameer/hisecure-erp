@@ -35,7 +35,7 @@ export default function QuotationsPage() {
         try {
             const token = localStorage.getItem('token');
             // Using enquiries endpoint as a placeholder for Quotations
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/enquiries`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/enquiries`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

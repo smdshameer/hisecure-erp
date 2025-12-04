@@ -30,7 +30,7 @@ export default function ServicePage() {
     const fetchTickets = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:3000/service-tickets', {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/service-tickets`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setTickets(response.data);
@@ -44,7 +44,7 @@ export default function ServicePage() {
     const updateStatus = async (id: number, newStatus: string) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.patch(`http://localhost:3000/service-tickets/${id}`,
+            await axios.patch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/service-tickets/${id}`,
                 { status: newStatus },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

@@ -51,8 +51,8 @@ export default function CreateSalePage() {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
             const [customersRes, productsRes] = await Promise.all([
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/customers`, { headers }),
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`, { headers })
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/products`, { headers })
             ]);
             setCustomers(customersRes.data);
             setProducts(productsRes.data);
@@ -103,7 +103,7 @@ export default function CreateSalePage() {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/sales`, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/sales`, {
                 customerId: formData.customerId ? Number(formData.customerId) : undefined,
                 paymentMethod: formData.paymentMethod,
                 items: formData.items.map(({ productName, ...item }) => item)

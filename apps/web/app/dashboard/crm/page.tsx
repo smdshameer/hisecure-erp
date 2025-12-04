@@ -27,9 +27,9 @@ export default function CRMDashboard() {
             const headers = { Authorization: `Bearer ${token}` };
 
             const [customersRes, followUpsRes, complaintsRes] = await Promise.all([
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/customers`, { headers }),
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/followups/pending`, { headers }),
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/complaints`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/followups/pending`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/complaints`, { headers }),
             ]);
 
             setStats({

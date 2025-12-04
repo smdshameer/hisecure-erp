@@ -21,7 +21,7 @@ export default function CustomerListPage() {
     const fetchCustomers = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/customers`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setCustomers(response.data);
@@ -36,7 +36,7 @@ export default function CustomerListPage() {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/customers`, newCustomer, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/customers`, newCustomer, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setIsModalOpen(false);

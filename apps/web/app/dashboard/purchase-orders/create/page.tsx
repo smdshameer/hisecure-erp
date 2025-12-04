@@ -42,8 +42,8 @@ export default function CreatePurchaseOrderPage() {
         try {
             const token = localStorage.getItem('token');
             const [suppliersRes, productsRes] = await Promise.all([
-                axios.get('http://localhost:3000/suppliers', { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get('http://localhost:3000/products', { headers: { Authorization: `Bearer ${token}` } })
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/suppliers`, { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/products`, { headers: { Authorization: `Bearer ${token}` } })
             ]);
             setSuppliers(suppliersRes.data);
             setProducts(productsRes.data);
@@ -83,7 +83,7 @@ export default function CreatePurchaseOrderPage() {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:3000/purchase-orders', {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/purchase-orders`, {
                 supplierId: Number(supplierId),
                 items: items.map(item => ({
                     productId: Number(item.productId),

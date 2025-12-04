@@ -26,7 +26,7 @@ export default function DashboardPage() {
     const fetchDashboardData = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/analytics/dashboard`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/analytics/dashboard`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setData(response.data);

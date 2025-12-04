@@ -16,7 +16,7 @@ export default function AccountingPage() {
         try {
             const token = localStorage.getItem('token');
             const res = await fetch(
-                `http://localhost:3000/accounting/${type}?startDate=${startDate}&endDate=${endDate}`,
+                `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/accounting/${type}?startDate=${startDate}&endDate=${endDate}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }

@@ -1,5 +1,5 @@
 import { IsInt, IsString, IsOptional, IsEnum } from 'class-validator';
-import { WarrantyStatus } from '@prisma/client';
+
 
 export class CreateWarrantyClaimDto {
   @IsInt()
@@ -10,9 +10,9 @@ export class CreateWarrantyClaimDto {
 }
 
 export class UpdateWarrantyClaimDto {
-  @IsEnum(WarrantyStatus)
+  @IsString()
   @IsOptional()
-  status?: WarrantyStatus;
+  status?: string;
 
   @IsString()
   @IsOptional()

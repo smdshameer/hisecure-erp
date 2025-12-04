@@ -49,8 +49,8 @@ export default function ReportsPage() {
             const headers = { Authorization: `Bearer ${token}` };
 
             const [statsRes, lowStockRes] = await Promise.all([
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reports/dashboard`, { headers }),
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reports/low-stock`, { headers })
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/reports/stats`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/reports/low-stock`, { headers })
             ]);
 
             setStats(statsRes.data);
@@ -68,8 +68,8 @@ export default function ReportsPage() {
             const headers = { Authorization: `Bearer ${token}` };
 
             const [gstr1Res, gstr3bRes] = await Promise.all([
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reports/gst/gstr1?month=${gstMonth}&year=${gstYear}`, { headers }),
-                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reports/gst/gstr3b?month=${gstMonth}&year=${gstYear}`, { headers })
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/reports/gst/gstr1?month=${gstMonth}&year=${gstYear}`, { headers }),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/reports/gst/gstr3b?month=${gstMonth}&year=${gstYear}`, { headers })
             ]);
 
             setGstr1Data(gstr1Res.data);

@@ -7,31 +7,20 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  STORE_MANAGER
-  TECHNICIAN
-  CASHIER
-}
 
-enum TicketStatus {
-  OPEN
-  IN_PROGRESS
-  WAITING_FOR_PARTS
-  COMPLETED
-  CLOSED
-}
+
+
 
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
   name      String
-  role      Role     @default(CASHIER)
+  role      String     @default("CASHIER")
   branch    String?
   gstin     String?
   state     String?
@@ -69,12 +58,12 @@ model Product {
   name           String
   description    String?
   category       String?
-  price          Decimal  @db.Decimal(10, 2)
-  costPrice      Decimal  @db.Decimal(10, 2)
+  price          Decimal
+  costPrice      Decimal
   stockQuantity  Int      @default(0)
   lowStockThreshold Int   @default(5)
   hsnCode        String?
-  gstRate        Decimal  @default(0) @db.Decimal(5, 2)
+  gstRate        Decimal  @default(0)
   imageUrl       String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -94,12 +83,12 @@ model Product {
 model Sale {
   id          Int      @id @default(autoincrement())
   invoiceNo   String   @unique
-  subTotal    Decimal  @default(0) @db.Decimal(10, 2)
-  cgst        Decimal  @default(0) @db.Decimal(10, 2)
-  sgst        Decimal  @default(0) @db.Decimal(10, 2)
-  igst        Decimal  @default(0) @db.Decimal(10, 2)
-  totalAmount Decimal  @db.Decimal(10, 2)
-  paymentMethod String // CASH, CARD, UPI, etc.
+  subTotal    Decimal  @default(0)
+  cgst        Decimal  @default(0)
+  sgst        Decimal  @default(0)
+  igst        Decimal  @default(0)
+  totalAmount Decimal
+  paymentMethod String
   createdAt   DateTime @default(now())
   
   userId      Int
@@ -114,7 +103,7 @@ model Sale {
 model SaleItem {
   id        Int      @id @default(autoincrement())
   quantity  Int
-  price     Decimal  @db.Decimal(10, 2)
+  price     Decimal
   
   saleId    Int
   sale      Sale     @relation(fields: [saleId], references: [id])
@@ -128,7 +117,7 @@ model SaleItem {
 model ServiceTicket {
   id          Int      @id @default(autoincrement())
   description String
-  status      TicketStatus @default(OPEN)
+  status      String @default("OPEN")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
@@ -152,12 +141,7 @@ model TicketPart {
   product   Product  @relation(fields: [productId], references: [id])
 }
 
-enum EnquiryStatus {
-  NEW
-  CONTACTED
-  CONVERTED
-  CLOSED
-}
+
 
 model Enquiry {
   id        Int      @id @default(autoincrement())
@@ -165,7 +149,7 @@ model Enquiry {
   email     String
   phone     String
   message   String
-  status    EnquiryStatus @default(NEW)
+  status    String @default("NEW")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -185,22 +169,17 @@ model Supplier {
   purchaseOrders PurchaseOrder[]
 }
 
-enum PurchaseOrderStatus {
-  DRAFT
-  ORDERED
-  RECEIVED
-  CANCELLED
-}
+
 
 model PurchaseOrder {
   id          Int      @id @default(autoincrement())
   poNumber    String   @unique
-  status      PurchaseOrderStatus @default(DRAFT)
-  subTotal    Decimal  @default(0) @db.Decimal(10, 2)
-  cgst        Decimal  @default(0) @db.Decimal(10, 2)
-  sgst        Decimal  @default(0) @db.Decimal(10, 2)
-  igst        Decimal  @default(0) @db.Decimal(10, 2)
-  totalAmount Decimal  @db.Decimal(10, 2)
+  status      String @default("DRAFT")
+  subTotal    Decimal  @default(0)
+  cgst        Decimal  @default(0)
+  sgst        Decimal  @default(0)
+  igst        Decimal  @default(0)
+  totalAmount Decimal
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -213,7 +192,7 @@ model PurchaseOrder {
 model PurchaseOrderItem {
   id        Int      @id @default(autoincrement())
   quantity  Int
-  unitCost  Decimal  @db.Decimal(10, 2)
+  unitCost  Decimal
 
   purchaseOrderId Int
   purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
@@ -222,17 +201,12 @@ model PurchaseOrderItem {
   product   Product @relation(fields: [productId], references: [id])
 }
 
-enum WarrantyStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  COMPLETED
-}
+
 
 model WarrantyClaim {
   id          Int      @id @default(autoincrement())
   description String
-  status      WarrantyStatus @default(PENDING)
+  status      String @default("PENDING")
   resolution  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -276,16 +250,12 @@ model BranchStock {
   @@unique([branchId, productId])
 }
 
-enum TransferStatus {
-  PENDING
-  COMPLETED
-  CANCELLED
-}
+
 
 model StockTransfer {
   id             Int      @id @default(autoincrement())
   quantity       Int
-  status         TransferStatus @default(COMPLETED) // Immediate transfer for now
+  status         String @default("COMPLETED") // Immediate transfer for now
   createdAt      DateTime @default(now())
   
   productId      Int
@@ -301,16 +271,11 @@ model StockTransfer {
 
 // CRM Module Additions
 
-enum InteractionType {
-  CALL
-  VISIT
-  EMAIL
-  WHATSAPP
-}
+
 
 model Interaction {
   id        Int      @id @default(autoincrement())
-  type      InteractionType
+  type      String
   notes     String?
   date      DateTime @default(now())
   createdAt DateTime @default(now())
@@ -323,17 +288,13 @@ model Interaction {
   customer   Customer @relation(fields: [customerId], references: [id])
 }
 
-enum FollowUpStatus {
-  PENDING
-  DONE
-  CANCELLED
-}
+
 
 model FollowUp {
   id          Int      @id @default(autoincrement())
   date        DateTime
   description String
-  status      FollowUpStatus @default(PENDING)
+  status      String @default("PENDING")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -344,26 +305,16 @@ model FollowUp {
   assignedTo   User? @relation(fields: [assignedToId], references: [id])
 }
 
-enum ComplaintStatus {
-  OPEN
-  IN_PROGRESS
-  RESOLVED
-  CLOSED
-}
 
-enum ComplaintPriority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
-}
+
+
 
 model Complaint {
   id          Int      @id @default(autoincrement())
   subject     String
   description String
-  status      ComplaintStatus @default(OPEN)
-  priority    ComplaintPriority @default(MEDIUM)
+  status      String @default("OPEN")
+  priority    String @default("MEDIUM")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

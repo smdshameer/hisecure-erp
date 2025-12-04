@@ -28,7 +28,7 @@ export default function PurchaseOrdersPage() {
     const fetchOrders = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:3000/purchase-orders', {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/purchase-orders`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setOrders(response.data);
@@ -43,7 +43,7 @@ export default function PurchaseOrdersPage() {
         if (!confirm('Are you sure you want to mark this PO as Received? This will update stock.')) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.patch(`http://localhost:3000/purchase-orders/${id}/receive`, {}, {
+            await axios.patch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/purchase-orders/${id}/receive`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchOrders();

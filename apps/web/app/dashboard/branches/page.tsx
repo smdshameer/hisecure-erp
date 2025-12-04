@@ -31,7 +31,7 @@ export default function BranchesPage() {
     const fetchBranches = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/branches`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/branches`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setBranches(response.data);
@@ -49,7 +49,7 @@ export default function BranchesPage() {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/branches`, formData, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/branches`, formData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setIsModalOpen(false);
