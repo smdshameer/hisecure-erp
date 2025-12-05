@@ -31,6 +31,7 @@ model User {
   tickets   ServiceTicket[]
   interactions Interaction[]
   assignedFollowUps FollowUp[]
+  auditLogs AuditLog[]
 }
 
 model Customer {
@@ -353,4 +354,30 @@ model QuotationItem {
   
   productId Int
   product   Product  @relation(fields: [productId], references: [id])
+}
+
+// --- NEW SETTINGS MODULE ---
+
+model SystemSetting {
+  id          Int      @id @default(autoincrement())
+  module      String   // e.g. "INVENTORY", "SALES", "CRM"
+  key         String   @unique // e.g. "INVENTORY_SKU_PREFIX"
+  value       String   // JSON string or simple value
+  description String?
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?
+}
+
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  action      String   // e.g. "UPDATE_SETTING"
+  entity      String   // e.g. "SystemSetting"
+  entityId    String   // Key or ID
+  oldValue    String?
+  newValue    String?
+  userId      Int?
+  user        User?    @relation(fields: [userId], references: [id])
+  timestamp   DateTime @default(now())
+  ipAddress   String?
+  reason      String?
 }

@@ -90,6 +90,28 @@ async function main() {
     });
 
     console.log({ product1, product2, sale });
+
+    // Seed Settings
+    const settings = [
+        { key: 'COMPANY_NAME', value: 'HiSecure ERP', module: 'SYSTEM', description: 'Name of the company' },
+        { key: 'THEME_COLOR', value: 'SYSTEM', module: 'SYSTEM', description: 'Application theme' },
+        { key: 'LOW_STOCK_THRESHOLD', value: '10', module: 'INVENTORY', description: 'Global low stock warning level' },
+        { key: 'ENABLE_BARCODE', value: 'true', module: 'INVENTORY', description: 'Enable barcode scanning' },
+        { key: 'DEFAULT_TAX_RATE', value: '18', module: 'SALES', description: 'Default GST rate (%)' },
+        { key: 'INVOICE_PREFIX', value: 'INV-', module: 'SALES', description: 'Prefix for invoice numbers' },
+        { key: 'ENABLE_LEAD_SCORING', value: 'false', module: 'CRM', description: 'Enable AI lead scoring' },
+        { key: 'JOBCARD_PREFIX', value: 'JOB-', module: 'SERVICE', description: 'Prefix for job cards' },
+    ];
+
+    for (const setting of settings) {
+        await prisma.systemSetting.upsert({
+            where: { key: setting.key },
+            update: {},
+            create: setting,
+        });
+    }
+
+    console.log('Settings seeded.');
 }
 
 main()

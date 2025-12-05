@@ -31,6 +31,7 @@ import { ComplaintsController } from './crm/complaints.controller';
 import { ComplaintsService } from './crm/complaints.service';
 
 import { QuotationsModule } from './quotations/quotations.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { QuotationsModule } from './quotations/quotations.module';
     TransfersModule,
     AnalyticsModule,
     QuotationsModule,
+    SettingsModule,
   ],
   controllers: [
     AppController,
