@@ -13,16 +13,34 @@ export default function SettingsTabs({
     onSelectCategory,
 }: SettingsTabsProps) {
     return (
-        <div className={styles.tabsContainer}>
-            {categories.map((category) => (
-                <button
-                    key={category}
-                    className={`${styles.tab} ${activeCategory === category ? styles.active : ''}`}
-                    onClick={() => onSelectCategory(category)}
+        <>
+            {/* Desktop Tabs */}
+            <div className={styles.tabsContainer}>
+                {categories.map((category) => (
+                    <button
+                        key={category}
+                        className={`${styles.tab} ${activeCategory === category ? styles.active : ''}`}
+                        onClick={() => onSelectCategory(category)}
+                    >
+                        {category}
+                    </button>
+                ))}
+            </div>
+
+            {/* Mobile Dropdown */}
+            <div className={styles.mobileSelectContainer}>
+                <select
+                    className={styles.mobileSelect}
+                    value={activeCategory}
+                    onChange={(e) => onSelectCategory(e.target.value)}
                 >
-                    {category}
-                </button>
-            ))}
-        </div>
+                    {categories.map((category) => (
+                        <option key={category} value={category}>
+                            {category}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        </>
     );
 }

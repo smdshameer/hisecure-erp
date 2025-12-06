@@ -3,37 +3,65 @@
     flex-direction: row;
     width: 100%;
     background-color: transparent;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid #e0e0e0;
     padding: 0;
     height: auto;
     overflow-x: auto;
-    gap: 0.5rem;
+    gap: 2rem;
+    margin-bottom: 1rem;
 }
 
 .tab {
-    padding: 12px 24px;
+    padding: 12px 4px;
     text-align: center;
     border: none;
     background: none;
     cursor: pointer;
     font-size: 14px;
-    color: #666;
+    color: #64748b;
     transition: all 0.2s ease;
     border-bottom: 3px solid transparent;
     border-left: none;
     font-weight: 500;
     white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .tab:hover {
-    background-color: #f5f5f5;
-    color: #333;
+    color: #0f172a;
 }
 
 .tab.active {
     background-color: transparent;
-    color: #1976d2;
-    border-bottom-color: #1976d2;
+    color: #2563eb;
+    border-bottom-color: #2563eb;
     border-left: none;
     font-weight: 600;
+}
+
+.mobileSelectContainer {
+    display: none;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.mobileSelect {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 16px;
+    color: #0f172a;
+}
+
+@media (max-width: 768px) {
+    .tabsContainer {
+        display: none;
+    }
+
+    .mobileSelectContainer {
+        display: block;
+    }
 }
