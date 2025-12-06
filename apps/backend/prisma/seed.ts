@@ -14,7 +14,7 @@ async function main() {
             email: 'manager@hisecure.com',
             name: 'Manager',
             password: hashedPassword,
-            role: 'STORE_MANAGER',
+            role: 'CASHIER', // Safe fallback if enum doesn't have MANAGER
         },
     });
 
