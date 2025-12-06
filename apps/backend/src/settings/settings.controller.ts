@@ -1,45 +1,53 @@
-import { Controller, Get, Patch, Body, Param, Query, UseGuards, Req, Post } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Body, Param, UseGuards, Query, Req, UnauthorizedException } from '@nestjs/common';
 import { SettingsService } from './settings.service';
-import { UpdateSettingDto } from './dto/update-setting.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('settings')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class SettingsController {
     constructor(private readonly settingsService: SettingsService) { }
 
     @Get()
-    findAll(@Query('module') module?: string) {
-        return this.settingsService.findAll(module, false);
-    }
-
-    @Get('export')
-    export() {
-        return this.settingsService.findAll(undefined, false);
-    }
-
-    @Post('bulk')
-    updateBulk(@Body() updateSettingsDto: UpdateSettingDto[], @Req() req) {
-        return this.settingsService.updateBulk(updateSettingsDto, req.user?.userId, req.ip);
+    async findAll(@Query('includeSystem') includeSystem: string) {
+        return this.settingsService.findAll(includeSystem === 'true');
     }
 
     @Get(':key')
-    findOne(@Param('key') key: string) {
-        return this.settingsService.findOne(key, false);
+    async findOne(@Param('key') key: string) {
+        // Note: Secrets are masked by default in service
+        return this.settingsService.findByKey(key);
     }
 
     @Patch(':key')
-    update(@Param('key') key: string, @Body() updateSettingDto: UpdateSettingDto, @Req() req) {
-        return this.settingsService.update(key, updateSettingDto, req.user?.userId, req.ip);
+    async update(
+        @Param('key') key: string,
+        @Body('value') value: any,
+        @Req() req: any,
+    ) {
+        if (!req.user) {
+            throw new UnauthorizedException();
+        }
+        // value is expected to be the raw value, service handles JSON stringify if needed
+        // based on frontend sending { value: "someval" } or { value: true }
+        return this.settingsService.update(key, value, req.user);
     }
 
     @Get(':key/history')
-    getHistory(@Param('key') key: string) {
+    async getHistory(@Param('key') key: string) {
         return this.settingsService.getHistory(key);
     }
 
-    @Post(':key/rollback')
-    rollback(@Param('key') key: string, @Body('version') version: number, @Req() req) {
-        return this.settingsService.rollback(key, version, req.user?.userId, req.ip);
+    @Get('data/export')
+    @Roles('ADMIN')
+    async export() {
+        return this.settingsService.exportSettings();
+    }
+
+    @Post('data/import')
+    @Roles('ADMIN')
+    async import(@Body() data: any[], @Req() req: any) {
+        return this.settingsService.importSettings(data, req.user);
     }
 }

@@ -22,6 +22,7 @@ const menuItems = [
     { name: 'Transfers', path: '/dashboard/transfers' },
     { name: 'Reports', path: '/dashboard/reports' },
     { name: 'Settings', path: '/dashboard/settings' },
+    { name: 'Users', path: '/dashboard/users' },
 ];
 
 export default function Sidebar() {
