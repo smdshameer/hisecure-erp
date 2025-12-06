@@ -135,14 +135,15 @@ export default function SettingsPage() {
             </div>
 
             <div className={styles.content}>
-                <SettingsTabs
-                    categories={categories}
-                    activeCategory={activeCategory}
-                    onSelectCategory={setActiveCategory}
-                />
-
                 <div className={styles.settingsPanel}>
                     <h2>{activeCategory} Settings</h2>
+
+                    <SettingsTabs
+                        categories={categories}
+                        activeCategory={activeCategory}
+                        onSelectCategory={setActiveCategory}
+                    />
+
                     {filteredSettings.length === 0 ? (
                         <p>No settings in this category.</p>
                     ) : (
