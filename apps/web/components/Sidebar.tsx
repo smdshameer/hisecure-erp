@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import styles from './Sidebar.module.css';
 import { useSidebar } from '../context/SidebarContext';
 
@@ -29,6 +30,48 @@ export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
     const { isOpen, closeSidebar } = useSidebar();
+    const [companyName, setCompanyName] = useState('HiSecure ERP');
+
+    const fetchCompanyName = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/settings/COMPANY_NAME`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                // If it's a settings object, getting value, assuming string or JSON string
+                let val = data.value;
+                try {
+                    // Settings are often JSON stringified
+                    const parsed = JSON.parse(val);
+                    if (typeof parsed === 'string') val = parsed;
+                } catch (e) {
+                    // value is plain string
+                }
+                setCompanyName(val || 'HiSecure ERP');
+            }
+        } catch (error) {
+            console.error('Failed to fetch company name', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCompanyName();
+
+        const handleSettingsChange = () => {
+            fetchCompanyName();
+        };
+
+        window.addEventListener('settingsChanged', handleSettingsChange);
+
+        return () => {
+            window.removeEventListener('settingsChanged', handleSettingsChange);
+        };
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -41,7 +84,7 @@ export default function Sidebar() {
             {isOpen && <div className={styles.overlay} onClick={closeSidebar}></div>}
             <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
                 <div className={styles.logo}>
-                    <h2>HiSecure ERP</h2>
+                    <h2>{companyName}</h2>
                 </div>
                 <nav className={styles.nav}>
                     {menuItems.map((item) => (

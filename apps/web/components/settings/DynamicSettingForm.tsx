@@ -54,6 +54,12 @@ export default function DynamicSettingForm({ setting }: DynamicSettingFormProps)
             }
 
             setMessage({ type: 'success', text: 'Saved!' });
+
+            // Dispatch event to notify other components (e.g. Sidebar)
+            if (setting.key === 'COMPANY_NAME') {
+                window.dispatchEvent(new Event('settingsChanged'));
+            }
+
             setTimeout(() => setMessage(null), 3000);
 
         } catch (error: any) {
