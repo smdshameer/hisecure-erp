@@ -91,23 +91,28 @@ async function main() {
 
     console.log({ product1, product2, sale });
 
-    // Seed Settings
+    // Seed Settings (Advanced Schema)
     const settings = [
-        { key: 'COMPANY_NAME', value: 'HiSecure ERP', module: 'SYSTEM', description: 'Name of the company' },
-        { key: 'THEME_COLOR', value: 'SYSTEM', module: 'SYSTEM', description: 'Application theme' },
-        { key: 'LOW_STOCK_THRESHOLD', value: '10', module: 'INVENTORY', description: 'Global low stock warning level' },
-        { key: 'ENABLE_BARCODE', value: 'true', module: 'INVENTORY', description: 'Enable barcode scanning' },
-        { key: 'DEFAULT_TAX_RATE', value: '18', module: 'SALES', description: 'Default GST rate (%)' },
-        { key: 'INVOICE_PREFIX', value: 'INV-', module: 'SALES', description: 'Prefix for invoice numbers' },
-        { key: 'ENABLE_LEAD_SCORING', value: 'false', module: 'CRM', description: 'Enable AI lead scoring' },
-        { key: 'JOBCARD_PREFIX', value: 'JOB-', module: 'SERVICE', description: 'Prefix for job cards' },
+        { key: 'COMPANY_NAME', value: 'HiSecure ERP', category: 'SYSTEM', type: 'STRING', description: 'Name of the company' },
+        { key: 'THEME_COLOR', value: 'SYSTEM', category: 'SYSTEM', type: 'STRING', description: 'Application theme' },
+        { key: 'LOW_STOCK_THRESHOLD', value: '10', category: 'INVENTORY', type: 'NUMBER', description: 'Global low stock warning level' },
+        { key: 'ENABLE_BARCODE', value: 'true', category: 'INVENTORY', type: 'BOOLEAN', description: 'Enable barcode scanning' },
+        { key: 'DEFAULT_TAX_RATE', value: '18', category: 'SALES', type: 'NUMBER', description: 'Default GST rate (%)' },
+        { key: 'INVOICE_PREFIX', value: 'INV-', category: 'SALES', type: 'STRING', description: 'Prefix for invoice numbers' },
+        { key: 'ENABLE_LEAD_SCORING', value: 'false', category: 'CRM', type: 'BOOLEAN', description: 'Enable AI lead scoring' },
+        { key: 'JOBCARD_PREFIX', value: 'JOB-', category: 'SERVICE', type: 'STRING', description: 'Prefix for job cards' },
+        // Developer / Secret Settings
+        { key: 'API_SECRET_KEY', value: 'super-secret-key-123', category: 'SYSTEM', type: 'SECRET', isSecret: true, isDeveloper: true, description: 'Internal API Key' },
     ];
 
     for (const setting of settings) {
-        await prisma.systemSetting.upsert({
+        await prisma.setting.upsert({
             where: { key: setting.key },
             update: {},
-            create: setting,
+            create: {
+                ...setting,
+                version: 1,
+            },
         });
     }
 

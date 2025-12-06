@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Patch, Body, Param, Query, UseGuards, Req, Post } from '@nestjs/common';
 import { SettingsService } from './settings.service';
 import { UpdateSettingDto } from './dto/update-setting.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Request } from 'express';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('settings')
 @UseGuards(JwtAuthGuard)
@@ -11,30 +10,36 @@ export class SettingsController {
 
     @Get()
     findAll(@Query('module') module?: string) {
-        return this.settingsService.findAll(module);
+        return this.settingsService.findAll(module, false);
+    }
+
+    @Get('export')
+    export() {
+        return this.settingsService.findAll(undefined, false);
+    }
+
+    @Post('bulk')
+    updateBulk(@Body() updateSettingsDto: UpdateSettingDto[], @Req() req) {
+        return this.settingsService.updateBulk(updateSettingsDto, req.user?.userId, req.ip);
     }
 
     @Get(':key')
     findOne(@Param('key') key: string) {
-        return this.settingsService.findOne(key);
+        return this.settingsService.findOne(key, false);
     }
 
     @Patch(':key')
-    update(
-        @Param('key') key: string,
-        @Body() updateSettingDto: UpdateSettingDto,
-        @Req() req: any
-    ) {
-        // req.user is populated by JwtAuthGuard
-        // req.ip is standard express
+    update(@Param('key') key: string, @Body() updateSettingDto: UpdateSettingDto, @Req() req) {
         return this.settingsService.update(key, updateSettingDto, req.user?.userId, req.ip);
     }
 
-    @Post('bulk')
-    updateBulk(
-        @Body() settings: UpdateSettingDto[],
-        @Req() req: any
-    ) {
-        return this.settingsService.updateBulk(settings, req.user?.userId, req.ip);
+    @Get(':key/history')
+    getHistory(@Param('key') key: string) {
+        return this.settingsService.getHistory(key);
+    }
+
+    @Post(':key/rollback')
+    rollback(@Param('key') key: string, @Body('version') version: number, @Req() req) {
+        return this.settingsService.rollback(key, version, req.user?.userId, req.ip);
     }
 }

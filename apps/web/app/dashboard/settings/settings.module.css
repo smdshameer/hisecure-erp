@@ -230,3 +230,153 @@ input:checked+.slider:before {
     color: #94a3b8;
     font-size: 1rem;
 }
+
+/* Advanced Settings Styles */
+.secretWrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.secretButton {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background: #f8f9fa;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.secretButton:hover {
+    background: #e9ecef;
+}
+
+.historyButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 4px;
+    border-radius: 50%;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.historyButton:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.badge {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-left: 8px;
+    text-transform: uppercase;
+}
+
+.badgeDeveloper {
+    background: #e0cffc;
+    color: #5b32a3; /* Deep purple */
+}
+
+.badgeSecret {
+    background: #ffe3e3;
+    color: #c92a2a; /* Red */
+}
+
+/* Modal */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    width: 500px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modalTitle {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.historyList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.historyItem {
+    border-bottom: 1px solid #f1f3f5;
+    padding: 12px 0;
+}
+
+.historyItem:last-child {
+    border-bottom: none;
+}
+
+.historyMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #868e96;
+    margin-bottom: 4px;
+}
+
+.historyValue {
+    font-family: monospace;
+    background: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.rollbackBtn {
+    margin-top: 8px;
+    background: transparent;
+    border: 1px solid #fab005;
+    color: #fab005;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.rollbackBtn:hover {
+    background: #fff9db;
+}

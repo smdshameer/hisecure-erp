@@ -358,14 +358,32 @@ model QuotationItem {
 
 // --- NEW SETTINGS MODULE ---
 
-model SystemSetting {
-  id          Int      @id @default(autoincrement())
-  module      String   // e.g. "INVENTORY", "SALES", "CRM"
-  key         String   @unique // e.g. "INVENTORY_SKU_PREFIX"
-  value       String   // JSON string or simple value
-  description String?
-  updatedAt   DateTime @updatedAt
-  updatedBy   String?
+model Setting {
+  id              Int      @id @default(autoincrement())
+  key             String   @unique
+  value           String   // JSON string
+  category        String   // e.g. 'SYSTEM', 'FINANCE'
+  type            String   // 'STRING', 'NUMBER', 'BOOLEAN', 'JSON', 'SECRET'
+  isDeveloper     Boolean  @default(false)
+  isSecret        Boolean  @default(false)
+  requiresRestart Boolean  @default(false)
+  version         Int      @default(1)
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  history         SettingHistory[]
+}
+
+model SettingHistory {
+  id        Int      @id @default(autoincrement())
+  settingId Int
+  setting   Setting  @relation(fields: [settingId], references: [id], onDelete: Cascade)
+  oldValue  String?
+  newValue  String?
+  version   Int
+  changedBy Int?     // User ID
+  timestamp DateTime @default(now())
 }
 
 model AuditLog {
