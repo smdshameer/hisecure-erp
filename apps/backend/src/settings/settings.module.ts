@@ -3,6 +3,7 @@ import { SettingsService } from './settings.service';
 import { SettingsController } from './settings.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
+import { EncryptionService } from './encryption.service';
 
 @Module({
     imports: [PrismaModule, JwtModule],

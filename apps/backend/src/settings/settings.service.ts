@@ -94,12 +94,14 @@ export class SettingsService implements OnModuleInit {
         }
 
         // Create history record
+        // Create history record
         await this.prisma.settingHistory.create({
             data: {
-                settingKey: key,
+                settingId: existing.id,
                 oldValue: existing.value, // Store encrypted history as is
                 newValue,
                 changedBy: user.id,
+                version: existing.version + 1,
             },
         });
 
@@ -118,8 +120,8 @@ export class SettingsService implements OnModuleInit {
         if (!setting) throw new NotFoundException();
 
         const history = await this.prisma.settingHistory.findMany({
-            where: { settingKey: key },
-            orderBy: { changedAt: 'desc' },
+            where: { settingId: setting.id },
+            orderBy: { timestamp: 'desc' },
             take: 20,
         });
 

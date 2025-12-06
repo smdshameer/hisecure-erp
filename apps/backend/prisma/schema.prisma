@@ -366,9 +366,12 @@ model Setting {
   type            String   // 'STRING', 'NUMBER', 'BOOLEAN', 'JSON', 'SECRET'
   isDeveloper     Boolean  @default(false)
   isSecret        Boolean  @default(false)
+  isSystem        Boolean  @default(false)
+  isPublic        Boolean  @default(false)
   requiresRestart Boolean  @default(false)
   version         Int      @default(1)
   description     String?
+  updatedBy       Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   
