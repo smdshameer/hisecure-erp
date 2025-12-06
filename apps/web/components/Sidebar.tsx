@@ -40,7 +40,8 @@ export default function Sidebar() {
                 return;
             }
 
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+            // Default to localhost:4000 (Backend) not 3000 (Frontend)
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
             console.log('Sidebar: Fetching company name from', `${apiUrl}/settings/COMPANY_NAME`);
 
             const res = await fetch(`${apiUrl}/settings/COMPANY_NAME`, {
