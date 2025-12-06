@@ -35,15 +35,22 @@ export default function Sidebar() {
     const fetchCompanyName = async () => {
         try {
             const token = localStorage.getItem('token');
-            if (!token) return;
+            if (!token) {
+                console.warn('Sidebar: No token found');
+                return;
+            }
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/settings/COMPANY_NAME`, {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+            console.log('Sidebar: Fetching company name from', `${apiUrl}/settings/COMPANY_NAME`);
+
+            const res = await fetch(`${apiUrl}/settings/COMPANY_NAME`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
             if (res.ok) {
                 const data = await res.json();
-                // If it's a settings object, getting value, assuming string or JSON string
+                console.log('Sidebar: Received data', data);
+
                 let val = data.value;
                 try {
                     // Settings are often JSON stringified
@@ -52,10 +59,13 @@ export default function Sidebar() {
                 } catch (e) {
                     // value is plain string
                 }
+                console.log('Sidebar: Setting name to', val);
                 setCompanyName(val || 'HiSecure ERP');
+            } else {
+                console.error('Sidebar: Fetch failed status:', res.status);
             }
         } catch (error) {
-            console.error('Failed to fetch company name', error);
+            console.error('Sidebar: Failed to fetch company name', error);
         }
     };
 
