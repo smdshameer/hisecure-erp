@@ -10,11 +10,6 @@ if (!dbUrl) {
 
 try {
     console.log('Running migrations...');
-    try {
-        execSync('npx prisma migrate resolve --applied 20251206000000_init_postgres', { stdio: 'inherit', env: process.env });
-    } catch (e) {
-        console.log('Migration resolve skipped or failed (safe to ignore if already resolved): ' + e.message);
-    }
     execSync('npx prisma migrate deploy', { stdio: 'inherit', env: process.env });
 
     console.log('Seeding database...');
