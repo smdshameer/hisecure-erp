@@ -2,9 +2,7 @@ const { execSync } = require('child_process');
 
 // Ensure DATABASE_URL starts with file: for SQLite
 let dbUrl = process.env.DATABASE_URL;
-if (dbUrl && !dbUrl.startsWith('file:')) {
-    console.log('Prepending file: to DATABASE_URL');
-    process.env.DATABASE_URL = `file:${dbUrl}`;
+console.log('Using DATABASE_URL from environment');
 } else if (!dbUrl) {
     // Fallback for when no env var is set (e.g. local dev without .env loaded yet, though usually .env handles this)
     // But on Render, if they forgot to set it, this might help if we default to something.
