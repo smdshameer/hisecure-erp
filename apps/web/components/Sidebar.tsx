@@ -10,7 +10,7 @@ const menuItems = [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'CRM', path: '/dashboard/crm' },
     { name: 'Inventory', path: '/dashboard/inventory' },
-    { name: 'Sales & Invoices', path: '/dashboard/sales' },
+    { name: 'Sales Orders', path: '/dashboard/sales-orders' },
     { name: 'Quotations', path: '/dashboard/quotations' },
     { name: 'Suppliers', path: '/dashboard/suppliers' },
     { name: 'Purchase Orders', path: '/dashboard/purchase-orders' },
