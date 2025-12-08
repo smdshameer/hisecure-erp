@@ -66,6 +66,7 @@ export class GoodsReceiptNoteService {
                 const currentStock = await prisma.branchStock.findUnique({
                     where: { branchId_productId: { branchId: grnData.warehouseId, productId: item.productId } }
                 });
+                if (!currentStock) throw new NotFoundException('Stock record not found during ledger entry');
 
                 await prisma.stockLedger.create({
                     data: {
