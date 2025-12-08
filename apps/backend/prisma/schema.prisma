@@ -186,6 +186,7 @@ model Supplier {
   updatedAt DateTime @updatedAt
 
   purchaseOrders PurchaseOrder[]
+  grns           GoodsReceiptNote[]
 }
 
 
@@ -253,6 +254,7 @@ model Branch {
 
   stocks        BranchStock[]
   targetTransfers StockTransfer[] @relation("TargetBranch")
+  sourceTransfers StockTransfer[] @relation("SourceBranch")
   
   dcFrom    DeliveryChallan[] @relation("DCFromWarehouse")
   dcTo      DeliveryChallan[] @relation("DCToWarehouse")
