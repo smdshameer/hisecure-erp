@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } fro
 import { SalesInvoiceService } from './sales-invoice.service';
 import { CreateSalesInvoiceDto } from './dto/create-sales-invoice.dto';
 import { UpdateSalesInvoiceDto } from './dto/update-sales-invoice.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('sales-invoices')
@@ -11,7 +11,7 @@ export class SalesInvoiceController {
     constructor(private readonly invoiceService: SalesInvoiceService) { }
 
     @Post()
-    create(@Body() createDto: CreateSalesInvoiceDto, @Req() req) {
+    create(@Body() createDto: CreateSalesInvoiceDto, @Req() req: any) {
         return this.invoiceService.create(createDto, req.user.id);
     }
 

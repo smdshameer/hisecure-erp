@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } fro
 import { DeliveryChallanService } from './delivery-challan.service';
 import { CreateDeliveryChallanDto } from './dto/create-delivery-challan.dto';
 import { UpdateDeliveryChallanDto } from './dto/update-delivery-challan.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('delivery-challans')
@@ -11,7 +11,7 @@ export class DeliveryChallanController {
     constructor(private readonly dcService: DeliveryChallanService) { }
 
     @Post()
-    create(@Body() createDto: CreateDeliveryChallanDto, @Req() req) {
+    create(@Body() createDto: CreateDeliveryChallanDto, @Req() req: any) {
         return this.dcService.create(createDto, req.user.id);
     }
 

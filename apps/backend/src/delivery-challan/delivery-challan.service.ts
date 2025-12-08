@@ -22,7 +22,6 @@ export class DeliveryChallanService {
 
             // 2. Prepare Items & Check/Deduct Stock
             const dcItems = [];
-            const stockLedgerEntries = [];
 
             for (const item of items) {
                 // Stock Check
@@ -53,11 +52,6 @@ export class DeliveryChallanService {
                     description: item.description,
                     serialNumbers: item.serialNumbers, // Optional
                 });
-
-                // Prepare Ledger Entry
-                // We'll create the ledger entry after the DC is created to get the REF ID,
-                // but we can prepare data. 
-                // actually we need to create DC first.
             }
 
             // 3. Create Delivery Challan
@@ -78,6 +72,8 @@ export class DeliveryChallanService {
                 const currentStock = await prisma.branchStock.findUnique({
                     where: { branchId_productId: { branchId: challanData.fromWarehouseId, productId: item.productId } }
                 });
+
+                if (!currentStock) throw new NotFoundException('Stock record not found during ledger entry');
 
                 await prisma.stockLedger.create({
                     data: {
@@ -127,7 +123,7 @@ export class DeliveryChallanService {
     update(id: number, updateDto: UpdateDeliveryChallanDto) {
         return this.prisma.deliveryChallan.update({
             where: { id },
-            data: updateDto,
+            data: updateDto as any,
         });
     }
 

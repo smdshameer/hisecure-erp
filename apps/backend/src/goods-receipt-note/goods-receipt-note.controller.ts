@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } fro
 import { GoodsReceiptNoteService } from './goods-receipt-note.service';
 import { CreateGrnDto } from './dto/create-grn.dto';
 import { UpdateGrnDto } from './dto/update-grn.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('grn')
@@ -11,7 +11,7 @@ export class GoodsReceiptNoteController {
     constructor(private readonly grnService: GoodsReceiptNoteService) { }
 
     @Post()
-    create(@Body() createDto: CreateGrnDto, @Req() req) {
+    create(@Body() createDto: CreateGrnDto, @Req() req: any) {
         return this.grnService.create(createDto, req.user.id);
     }
 

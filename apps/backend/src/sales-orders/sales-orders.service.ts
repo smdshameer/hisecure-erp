@@ -109,7 +109,7 @@ export class SalesOrdersService {
         // Basic update logic - usually restricted if status is CONFIRMED
         return this.prisma.salesOrder.update({
             where: { id },
-            data: updateSalesOrderDto,
+            data: updateSalesOrderDto as any,
         });
     }
 

@@ -94,7 +94,7 @@ export class SalesInvoiceService {
     update(id: number, updateDto: UpdateSalesInvoiceDto) {
         return this.prisma.salesInvoice.update({
             where: { id },
-            data: updateDto,
+            data: updateDto as any,
         });
     }
 

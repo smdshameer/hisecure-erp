@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } fro
 import { SalesOrdersService } from './sales-orders.service';
 import { CreateSalesOrderDto } from './dto/create-sales-order.dto';
 import { UpdateSalesOrderDto } from './dto/update-sales-order.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('sales-orders')
@@ -11,7 +11,7 @@ export class SalesOrdersController {
     constructor(private readonly salesOrdersService: SalesOrdersService) { }
 
     @Post()
-    create(@Body() createSalesOrderDto: CreateSalesOrderDto, @Req() req) {
+    create(@Body() createSalesOrderDto: CreateSalesOrderDto, @Req() req: any) {
         return this.salesOrdersService.create(createSalesOrderDto, req.user.id);
     }
 
