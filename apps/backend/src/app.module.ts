@@ -32,6 +32,11 @@ import { ComplaintsService } from './crm/complaints.service';
 
 import { QuotationsModule } from './quotations/quotations.module';
 import { SettingsModule } from './settings/settings.module';
+import { SalesOrdersModule } from './sales-orders/sales-orders.module';
+import { DeliveryChallanModule } from './delivery-challan/delivery-challan.module';
+import { StockLedgerModule } from './stock-ledger/stock-ledger.module';
+import { SalesInvoiceModule } from './sales-invoice/sales-invoice.module';
+import { GoodsReceiptNoteModule } from './goods-receipt-note/goods-receipt-note.module';
 
 @Module({
   imports: [
@@ -57,6 +62,11 @@ import { SettingsModule } from './settings/settings.module';
     AnalyticsModule,
     QuotationsModule,
     SettingsModule,
+    SalesOrdersModule,
+    DeliveryChallanModule,
+    StockLedgerModule,
+    SalesInvoiceModule,
+    GoodsReceiptNoteModule,
   ],
   controllers: [
     AppController,
