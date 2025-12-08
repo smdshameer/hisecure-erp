@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
@@ -11,33 +11,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
-
-
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
   name      String
-  role      String     @default("CASHIER")
+  role      String   @default("CASHIER")
   branch    String?
   gstin     String?
   state     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  sales     Sale[]
-  tickets   ServiceTicket[]
-  interactions Interaction[]
-  assignedFollowUps FollowUp[]
-  auditLogs AuditLog[]
 
-  createdSalesOrders    SalesOrder[]
-  createdDCs            DeliveryChallan[] @relation("DCCreator")
-  approvedDCs           DeliveryChallan[] @relation("DCApprover")
-  createdInvoices       SalesInvoice[]
-  createdGRNs           GoodsReceiptNote[]
+  sales             Sale[]
+  tickets           ServiceTicket[]
+  interactions      Interaction[]
+  assignedFollowUps FollowUp[]
+  auditLogs         AuditLog[]
+
+  createdSalesOrders SalesOrder[]
+  createdDCs         DeliveryChallan[]  @relation("DCCreator")
+  approvedDCs        DeliveryChallan[]  @relation("DCApprover")
+  createdInvoices    SalesInvoice[]
+  createdGRNs        GoodsReceiptNote[]
 }
 
 model Customer {
@@ -51,84 +47,84 @@ model Customer {
   segment   String?
   notes     String?
   createdAt DateTime @default(now())
-  
-  sales     Sale[]
-  tickets   ServiceTicket[]
+
+  sales        Sale[]
+  tickets      ServiceTicket[]
   interactions Interaction[]
   followUps    FollowUp[]
   complaints   Complaint[]
   quotations   Quotation[]
-  
+
   salesOrders      SalesOrder[]
   deliveryChallans DeliveryChallan[]
   salesInvoices    SalesInvoice[]
 }
 
 model Product {
-  id             Int      @id @default(autoincrement())
-  sku            String   @unique
-  name           String
-  description    String?
-  category       String?
-  price          Decimal
-  costPrice      Decimal
-  stockQuantity  Int      @default(0)
-  lowStockThreshold Int   @default(5)
-  hsnCode        String?
-  gstRate        Decimal  @default(0)
-  imageUrl       String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                Int      @id @default(autoincrement())
+  sku               String   @unique
+  name              String
+  description       String?
+  category          String?
+  price             Decimal
+  costPrice         Decimal
+  stockQuantity     Int      @default(0)
+  lowStockThreshold Int      @default(5)
+  hsnCode           String?
+  gstRate           Decimal  @default(0)
+  imageUrl          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   saleItems      SaleItem[]
   ticketParts    TicketPart[]
   purchaseItems  PurchaseOrderItem[]
   quotationItems QuotationItem[]
-  warrantyMonths Int      @default(0) // 0 means no warranty
+  warrantyMonths Int                 @default(0) // 0 means no warranty
 
   branchStocks   BranchStock[]
   stockTransfers StockTransfer[]
-  
+
   stockLedgerEntries StockLedger[]
   salesOrderItems    SalesOrderItem[]
   dcItems            DeliveryChallanItem[]
   invoiceItems       SalesInvoiceItem[]
   grnItems           GRNItem[]
 
-  autoReorder    Boolean  @default(false)
+  autoReorder     Boolean @default(false)
   reorderQuantity Int     @default(10)
 }
 
 model Sale {
-  id          Int      @id @default(autoincrement())
-  invoiceNo   String   @unique
-  subTotal    Decimal  @default(0)
-  cgst        Decimal  @default(0)
-  sgst        Decimal  @default(0)
-  igst        Decimal  @default(0)
-  totalAmount Decimal
+  id            Int      @id @default(autoincrement())
+  invoiceNo     String   @unique
+  subTotal      Decimal  @default(0)
+  cgst          Decimal  @default(0)
+  sgst          Decimal  @default(0)
+  igst          Decimal  @default(0)
+  totalAmount   Decimal
   paymentMethod String
-  createdAt   DateTime @default(now())
-  
-  userId      Int
-  user        User     @relation(fields: [userId], references: [id])
-  
-  customerId  Int?
-  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  
-  items       SaleItem[]
+  createdAt     DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  customerId Int?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  items SaleItem[]
 }
 
 model SaleItem {
-  id        Int      @id @default(autoincrement())
-  quantity  Int
-  price     Decimal
-  
-  saleId    Int
-  sale      Sale     @relation(fields: [saleId], references: [id])
-  
+  id       Int     @id @default(autoincrement())
+  quantity Int
+  price    Decimal
+
+  saleId Int
+  sale   Sale @relation(fields: [saleId], references: [id])
+
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 
   warrantyClaims WarrantyClaim[]
 }
@@ -136,31 +132,29 @@ model SaleItem {
 model ServiceTicket {
   id          Int      @id @default(autoincrement())
   description String
-  status      String @default("OPEN")
+  status      String   @default("OPEN")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
-  customerId  Int
-  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
+
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
   technicianId Int?
-  technician   User?    @relation(fields: [technicianId], references: [id])
-  
-  parts       TicketPart[]
+  technician   User? @relation(fields: [technicianId], references: [id])
+
+  parts TicketPart[]
 }
 
 model TicketPart {
-  id        Int      @id @default(autoincrement())
-  quantity  Int
-  
-  ticketId  Int
-  ticket    ServiceTicket @relation(fields: [ticketId], references: [id])
-  
+  id       Int @id @default(autoincrement())
+  quantity Int
+
+  ticketId Int
+  ticket   ServiceTicket @relation(fields: [ticketId], references: [id])
+
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
-
-
 
 model Enquiry {
   id        Int      @id @default(autoincrement())
@@ -168,33 +162,31 @@ model Enquiry {
   email     String
   phone     String
   message   String
-  status    String @default("NEW")
+  status    String   @default("NEW")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Supplier {
-  id        Int      @id @default(autoincrement())
-  name      String
+  id            Int      @id @default(autoincrement())
+  name          String
   contactPerson String?
-  email     String?
-  phone     String?
-  address   String?
-  gstin     String?
-  state     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  email         String?
+  phone         String?
+  address       String?
+  gstin         String?
+  state         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   purchaseOrders PurchaseOrder[]
   grns           GoodsReceiptNote[]
 }
 
-
-
 model PurchaseOrder {
   id          Int      @id @default(autoincrement())
   poNumber    String   @unique
-  status      String @default("DRAFT")
+  status      String   @default("DRAFT")
   subTotal    Decimal  @default(0)
   cgst        Decimal  @default(0)
   sgst        Decimal  @default(0)
@@ -203,16 +195,16 @@ model PurchaseOrder {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  supplierId  Int
-  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  supplierId Int
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
 
-  items       PurchaseOrderItem[]
+  items PurchaseOrderItem[]
 }
 
 model PurchaseOrderItem {
-  id        Int      @id @default(autoincrement())
-  quantity  Int
-  unitCost  Decimal
+  id       Int     @id @default(autoincrement())
+  quantity Int
+  unitCost Decimal
 
   purchaseOrderId Int
   purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
@@ -221,26 +213,24 @@ model PurchaseOrderItem {
   product   Product @relation(fields: [productId], references: [id])
 }
 
-
-
 model WarrantyClaim {
   id          Int      @id @default(autoincrement())
   description String
-  status      String @default("PENDING")
+  status      String   @default("PENDING")
   resolution  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  saleItemId  Int
-  saleItem    SaleItem @relation(fields: [saleItemId], references: [id])
+  saleItemId Int
+  saleItem   SaleItem @relation(fields: [saleItemId], references: [id])
 }
 
 // GST Compliance Additions
 model GSTConfig {
-  id          Int      @id @default(autoincrement())
-  gstin       String?
-  state       String?  // Business State for tax calculation
-  updatedAt   DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  gstin     String?
+  state     String? // Business State for tax calculation
+  updatedAt DateTime @updatedAt
 }
 
 model Branch {
@@ -252,51 +242,47 @@ model Branch {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  stocks        BranchStock[]
+  stocks          BranchStock[]
   targetTransfers StockTransfer[] @relation("TargetBranch")
   sourceTransfers StockTransfer[] @relation("SourceBranch")
-  
-  dcFrom    DeliveryChallan[] @relation("DCFromWarehouse")
-  dcTo      DeliveryChallan[] @relation("DCToWarehouse")
+
+  dcFrom             DeliveryChallan[]  @relation("DCFromWarehouse")
+  dcTo               DeliveryChallan[]  @relation("DCToWarehouse")
   stockLedgerEntries StockLedger[]
-  grns      GoodsReceiptNote[]
+  grns               GoodsReceiptNote[]
 }
 
 model BranchStock {
-  id        Int      @id @default(autoincrement())
-  quantity  Int      @default(0)
-  
-  branchId  Int
-  branch    Branch   @relation(fields: [branchId], references: [id])
-  
+  id       Int @id @default(autoincrement())
+  quantity Int @default(0)
+
+  branchId Int
+  branch   Branch @relation(fields: [branchId], references: [id])
+
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 
   @@unique([branchId, productId])
 }
 
-
-
 model StockTransfer {
-  id             Int      @id @default(autoincrement())
-  quantity       Int
-  status         String @default("COMPLETED") // Immediate transfer for now
-  createdAt      DateTime @default(now())
-  
-  productId      Int
-  product        Product  @relation(fields: [productId], references: [id])
+  id        Int      @id @default(autoincrement())
+  quantity  Int
+  status    String   @default("COMPLETED") // Immediate transfer for now
+  createdAt DateTime @default(now())
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
 
   // Null source/target means Main Warehouse
   sourceBranchId Int?
-  sourceBranch   Branch?  @relation("SourceBranch", fields: [sourceBranchId], references: [id])
-  
+  sourceBranch   Branch? @relation("SourceBranch", fields: [sourceBranchId], references: [id])
+
   targetBranchId Int?
-  targetBranch   Branch?  @relation("TargetBranch", fields: [targetBranchId], references: [id])
+  targetBranch   Branch? @relation("TargetBranch", fields: [targetBranchId], references: [id])
 }
 
 // CRM Module Additions
-
-
 
 model Interaction {
   id        Int      @id @default(autoincrement())
@@ -306,77 +292,71 @@ model Interaction {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
 
   customerId Int
   customer   Customer @relation(fields: [customerId], references: [id])
 }
 
-
-
 model FollowUp {
   id          Int      @id @default(autoincrement())
   date        DateTime
   description String
-  status      String @default("PENDING")
+  status      String   @default("PENDING")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  customerId  Int
-  customer    Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
 
   assignedToId Int?
   assignedTo   User? @relation(fields: [assignedToId], references: [id])
 }
 
-
-
-
-
 model Complaint {
   id          Int      @id @default(autoincrement())
   subject     String
   description String
-  status      String @default("OPEN")
-  priority    String @default("MEDIUM")
+  status      String   @default("OPEN")
+  priority    String   @default("MEDIUM")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  customerId  Int
-  customer    Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
 }
 
 model Quotation {
-  id          Int      @id @default(autoincrement())
-  quotationNo String   @unique
-  status      String   @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
-  subTotal    Decimal  @default(0)
-  cgst        Decimal  @default(0)
-  sgst        Decimal  @default(0)
-  igst        Decimal  @default(0)
+  id          Int       @id @default(autoincrement())
+  quotationNo String    @unique
+  status      String    @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
+  subTotal    Decimal   @default(0)
+  cgst        Decimal   @default(0)
+  sgst        Decimal   @default(0)
+  igst        Decimal   @default(0)
   totalAmount Decimal
   validUntil  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  customerId  Int
-  customer    Customer @relation(fields: [customerId], references: [id])
-  
-  items       QuotationItem[]
-  salesOrder  SalesOrder[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  items      QuotationItem[]
+  salesOrder SalesOrder[]
 }
 
 model QuotationItem {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   quantity  Int
   unitPrice Decimal
-  
+
   quotationId Int
   quotation   Quotation @relation(fields: [quotationId], references: [id])
-  
+
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 // --- NEW SETTINGS MODULE ---
@@ -384,9 +364,9 @@ model QuotationItem {
 model Setting {
   id              Int      @id @default(autoincrement())
   key             String   @unique
-  value           String   // JSON string
-  category        String   // e.g. 'SYSTEM', 'FINANCE'
-  type            String   // 'STRING', 'NUMBER', 'BOOLEAN', 'JSON', 'SECRET'
+  value           String // JSON string
+  category        String // e.g. 'SYSTEM', 'FINANCE'
+  type            String // 'STRING', 'NUMBER', 'BOOLEAN', 'JSON', 'SECRET'
   isDeveloper     Boolean  @default(false)
   isSecret        Boolean  @default(false)
   isSystem        Boolean  @default(false)
@@ -397,8 +377,8 @@ model Setting {
   updatedBy       Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  
-  history         SettingHistory[]
+
+  history SettingHistory[]
 }
 
 model SettingHistory {
@@ -408,187 +388,187 @@ model SettingHistory {
   oldValue  String?
   newValue  String?
   version   Int
-  changedBy Int?     // User ID
+  changedBy Int? // User ID
   timestamp DateTime @default(now())
 }
 
 model AuditLog {
-  id          Int      @id @default(autoincrement())
-  action      String   // e.g. "UPDATE_SETTING"
-  entity      String   // e.g. "SystemSetting"
-  entityId    String   // Key or ID
-  oldValue    String?
-  newValue    String?
-  userId      Int?
-  user        User?    @relation(fields: [userId], references: [id])
-  timestamp   DateTime @default(now())
-  ipAddress   String?
-  reason      String?
+  id        Int      @id @default(autoincrement())
+  action    String // e.g. "UPDATE_SETTING"
+  entity    String // e.g. "SystemSetting"
+  entityId  String // Key or ID
+  oldValue  String?
+  newValue  String?
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+  timestamp DateTime @default(now())
+  ipAddress String?
+  reason    String?
 }
 
 // --- SALES & LOGISTICS LAYER ---
 
 model StockLedger {
-  id          Int      @id @default(autoincrement())
-  tenantId    Int      @default(1) // Single tenant default
-  entryDate   DateTime @default(now())
-  qtyIn       Int      @default(0)
-  qtyOut      Int      @default(0)
-  balanceQty  Int // Calculated snapshot after transaction
-  
-  refType     String   // "DELIVERY_CHALLAN", "GRN", "ADJUSTMENT", "TRANSFER"
-  refId       Int      // ID of the related document
-  
-  productId   Int
-  product     Product  @relation(fields: [productId], references: [id])
-  
-  warehouseId Int      // Functionally a Branch ID
-  warehouse   Branch   @relation(fields: [warehouseId], references: [id])
-  
-  createdAt   DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  tenantId   Int      @default(1) // Single tenant default
+  entryDate  DateTime @default(now())
+  qtyIn      Int      @default(0)
+  qtyOut     Int      @default(0)
+  balanceQty Int // Calculated snapshot after transaction
+
+  refType String // "DELIVERY_CHALLAN", "GRN", "ADJUSTMENT", "TRANSFER"
+  refId   Int // ID of the related document
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  warehouseId Int // Functionally a Branch ID
+  warehouse   Branch @relation(fields: [warehouseId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 model SalesOrder {
-  id             Int      @id @default(autoincrement())
-  tenantId       Int      @default(1)
-  orderNumber    String   @unique
-  orderDate      DateTime @default(now())
-  status         String   @default("DRAFT") // DRAFT, CONFIRMED, PARTIALLY_DISPATCHED, COMPLETED, CANCELLED
-  remarks        String?
-  
-  customerId     Int
-  customer       Customer @relation(fields: [customerId], references: [id])
-  
-  quotationId    Int?     // Optional link to Quotation
-  quotation      Quotation? @relation(fields: [quotationId], references: [id])
-  
-  items          SalesOrderItem[]
+  id          Int      @id @default(autoincrement())
+  tenantId    Int      @default(1)
+  orderNumber String   @unique
+  orderDate   DateTime @default(now())
+  status      String   @default("DRAFT") // DRAFT, CONFIRMED, PARTIALLY_DISPATCHED, COMPLETED, CANCELLED
+  remarks     String?
+
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  quotationId Int? // Optional link to Quotation
+  quotation   Quotation? @relation(fields: [quotationId], references: [id])
+
+  items            SalesOrderItem[]
   deliveryChallans DeliveryChallan[]
 
-  createdBy      Int
-  creator        User     @relation(fields: [createdBy], references: [id])
-  
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdBy Int
+  creator   User @relation(fields: [createdBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SalesOrderItem {
-  id           Int        @id @default(autoincrement())
-  description  String?
-  orderedQty   Int
-  dispatchedQty Int       @default(0) // Tracks how many sent via DCs
-  unit         String     @default("pcs")
-  price        Decimal
-  discount     Decimal    @default(0)
-  taxRate      Decimal    @default(0)
-  lineTotal    Decimal
-  
+  id            Int     @id @default(autoincrement())
+  description   String?
+  orderedQty    Int
+  dispatchedQty Int     @default(0) // Tracks how many sent via DCs
+  unit          String  @default("pcs")
+  price         Decimal
+  discount      Decimal @default(0)
+  taxRate       Decimal @default(0)
+  lineTotal     Decimal
+
   salesOrderId Int
   salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Cascade)
-  
-  productId    Int
-  product      Product    @relation(fields: [productId], references: [id])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model DeliveryChallan {
-  id              Int      @id @default(autoincrement())
-  tenantId        Int      @default(1)
-  challanNumber   String   @unique
-  challanDate     DateTime @default(now())
-  type            String   @default("SO") // SO, TRANSFER, SERVICE, SAMPLE, OTHER
-  status          String   @default("DRAFT") // DRAFT, DISPATCHED, INVOICED, CANCELLED
-  remarks         String?
-  
-  customerId      Int?     // Nullable for internal transfers
-  customer        Customer? @relation(fields: [customerId], references: [id])
-  
-  fromWarehouseId Int
-  fromWarehouse   Branch   @relation("DCFromWarehouse", fields: [fromWarehouseId], references: [id])
-  
-  toWarehouseId   Int?     // For transfers
-  toWarehouse     Branch?  @relation("DCToWarehouse", fields: [toWarehouseId], references: [id])
-  
-  salesOrderId    Int?
-  salesOrder      SalesOrder? @relation(fields: [salesOrderId], references: [id])
-  
-  items           DeliveryChallanItem[]
-  invoiceLinks    SalesInvoiceDeliveryChallan[]
+  id            Int      @id @default(autoincrement())
+  tenantId      Int      @default(1)
+  challanNumber String   @unique
+  challanDate   DateTime @default(now())
+  type          String   @default("SO") // SO, TRANSFER, SERVICE, SAMPLE, OTHER
+  status        String   @default("DRAFT") // DRAFT, DISPATCHED, INVOICED, CANCELLED
+  remarks       String?
 
-  createdBy      Int
-  creator        User     @relation("DCCreator", fields: [createdBy], references: [id])
-  
-  approvedBy     Int?
-  approver       User?    @relation("DCApprover", fields: [approvedBy], references: [id])
-  
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  customerId Int? // Nullable for internal transfers
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
+  fromWarehouseId Int
+  fromWarehouse   Branch @relation("DCFromWarehouse", fields: [fromWarehouseId], references: [id])
+
+  toWarehouseId Int? // For transfers
+  toWarehouse   Branch? @relation("DCToWarehouse", fields: [toWarehouseId], references: [id])
+
+  salesOrderId Int?
+  salesOrder   SalesOrder? @relation(fields: [salesOrderId], references: [id])
+
+  items        DeliveryChallanItem[]
+  invoiceLinks SalesInvoiceDeliveryChallan[]
+
+  createdBy Int
+  creator   User @relation("DCCreator", fields: [createdBy], references: [id])
+
+  approvedBy Int?
+  approver   User? @relation("DCApprover", fields: [approvedBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model DeliveryChallanItem {
-  id                Int             @id @default(autoincrement())
-  description       String?
-  quantity          Int
-  unit              String          @default("pcs")
-  serialNumbers     String?         // JSON string or comma separated
-  
+  id            Int     @id @default(autoincrement())
+  description   String?
+  quantity      Int
+  unit          String  @default("pcs")
+  serialNumbers String? // JSON string or comma separated
+
   deliveryChallanId Int
   deliveryChallan   DeliveryChallan @relation(fields: [deliveryChallanId], references: [id], onDelete: Cascade)
-  
-  productId         Int
-  product           Product         @relation(fields: [productId], references: [id])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
 
   // Optional link back to SO Item to track dispatch count
   linkedSalesOrderItemId Int?
 }
 
 model SalesInvoice {
-  id             Int      @id @default(autoincrement())
-  tenantId       Int      @default(1)
-  invoiceNumber  String   @unique
-  invoiceDate    DateTime @default(now())
-  dueDate        DateTime?
-  status         String   @default("DRAFT") // DRAFT, POSTED, CANCELLED
-  remarks        String?
-  
+  id            Int       @id @default(autoincrement())
+  tenantId      Int       @default(1)
+  invoiceNumber String    @unique
+  invoiceDate   DateTime  @default(now())
+  dueDate       DateTime?
+  status        String    @default("DRAFT") // DRAFT, POSTED, CANCELLED
+  remarks       String?
+
   totalBeforeTax Decimal
   totalTax       Decimal
   totalAmount    Decimal
-  
-  customerId     Int
-  customer       Customer @relation(fields: [customerId], references: [id])
-  
-  items          SalesInvoiceItem[]
-  challanLinks   SalesInvoiceDeliveryChallan[]
 
-  createdBy      Int
-  creator        User     @relation(fields: [createdBy], references: [id])
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  items        SalesInvoiceItem[]
+  challanLinks SalesInvoiceDeliveryChallan[]
+
+  createdBy Int
+  creator   User @relation(fields: [createdBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SalesInvoiceItem {
-  id             Int          @id @default(autoincrement())
-  description    String?
-  quantity       Int
-  unit           String       @default("pcs")
-  price          Decimal
-  discount       Decimal      @default(0)
-  taxRate        Decimal      @default(0)
-  lineTotal      Decimal
-  
+  id          Int     @id @default(autoincrement())
+  description String?
+  quantity    Int
+  unit        String  @default("pcs")
+  price       Decimal
+  discount    Decimal @default(0)
+  taxRate     Decimal @default(0)
+  lineTotal   Decimal
+
   salesInvoiceId Int
   salesInvoice   SalesInvoice @relation(fields: [salesInvoiceId], references: [id], onDelete: Cascade)
-  
-  productId      Int
-  product        Product      @relation(fields: [productId], references: [id])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model SalesInvoiceDeliveryChallan {
-  id                Int             @id @default(autoincrement())
-  salesInvoiceId    Int
-  salesInvoice      SalesInvoice    @relation(fields: [salesInvoiceId], references: [id], onDelete: Cascade)
-  
+  id             Int          @id @default(autoincrement())
+  salesInvoiceId Int
+  salesInvoice   SalesInvoice @relation(fields: [salesInvoiceId], references: [id], onDelete: Cascade)
+
   deliveryChallanId Int
   deliveryChallan   DeliveryChallan @relation(fields: [deliveryChallanId], references: [id])
 
@@ -596,40 +576,40 @@ model SalesInvoiceDeliveryChallan {
 }
 
 model GoodsReceiptNote {
-  id          Int      @id @default(autoincrement())
-  tenantId    Int      @default(1)
-  grnNumber   String   @unique
-  grnDate     DateTime @default(now())
-  status      String   @default("DRAFT") // DRAFT, POSTED, CANCELLED
-  remarks     String?
-  
-  supplierId  Int
-  supplier    Supplier @relation(fields: [supplierId], references: [id])
-  
-  warehouseId Int
-  warehouse   Branch   @relation(fields: [warehouseId], references: [id])
-  
-  items       GRNItem[]
-  
-  createdBy   Int
-  creator     User     @relation(fields: [createdBy], references: [id])
+  id        Int      @id @default(autoincrement())
+  tenantId  Int      @default(1)
+  grnNumber String   @unique
+  grnDate   DateTime @default(now())
+  status    String   @default("DRAFT") // DRAFT, POSTED, CANCELLED
+  remarks   String?
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  supplierId Int
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+
+  warehouseId Int
+  warehouse   Branch @relation(fields: [warehouseId], references: [id])
+
+  items GRNItem[]
+
+  createdBy Int
+  creator   User @relation(fields: [createdBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model GRNItem {
-  id            Int              @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   description   String?
   quantity      Int
-  unit          String           @default("pcs")
+  unit          String  @default("pcs")
   purchasePrice Decimal
-  taxRate       Decimal          @default(0)
+  taxRate       Decimal @default(0)
   lineTotal     Decimal
-  
-  grnId         Int
-  grn           GoodsReceiptNote @relation(fields: [grnId], references: [id], onDelete: Cascade)
-  
-  productId     Int
-  product       Product          @relation(fields: [productId], references: [id])
+
+  grnId Int
+  grn   GoodsReceiptNote @relation(fields: [grnId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
 }
