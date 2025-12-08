@@ -30,6 +30,16 @@ export class DeliveryChallanController {
         return this.dcService.update(+id, updateDto);
     }
 
+    @Post(':id/dispatch')
+    dispatch(@Param('id') id: string, @Req() req: any) {
+        return this.dcService.dispatch(+id, req.user.id);
+    }
+
+    @Post(':id/cancel')
+    cancel(@Param('id') id: string, @Req() req: any) {
+        return this.dcService.cancel(+id, req.user.id);
+    }
+
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.dcService.remove(+id);

@@ -37,6 +37,46 @@ export default function DeliveryChallanDetailPage() {
         }
     };
 
+    const handleDispatch = async (id: number) => {
+        if (!confirm('Are you sure you want to DISPATCH this Challan? Stock will be deducted.')) return;
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/delivery-challans/${id}/dispatch`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                alert('Challan Dispatched Successfully!');
+                fetchChallan(id); // Refresh
+            } else {
+                const err = await res.json();
+                alert(`Error: ${err.message}`);
+            }
+        } catch (error) {
+            console.error('Dispatch failed', error);
+        }
+    };
+
+    const handleCancel = async (id: number) => {
+        if (!confirm('Are you sure you want to CANCEL this Challan?')) return;
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/delivery-challans/${id}/cancel`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                alert('Challan Cancelled!');
+                fetchChallan(id); // Refresh
+            } else {
+                const err = await res.json();
+                alert(`Error: ${err.message}`);
+            }
+        } catch (error) {
+            console.error('Cancel failed', error);
+        }
+    };
+
     if (loading) return <div className={styles.container}><p>Loading...</p></div>;
     if (!challan) return <div className={styles.container}><p>Challan not found</p></div>;
 
@@ -49,7 +89,13 @@ export default function DeliveryChallanDetailPage() {
                 </div>
                 <div className={styles.actions}>
                     <Link href="/dashboard/delivery-challans" className="btn btn-secondary">← Back to List</Link>
-                    <button className="btn btn-primary">Print</button>
+                    {challan.status === 'DRAFT' && (
+                        <>
+                            <button onClick={() => handleDispatch(challan.id)} className="btn btn-primary" style={{ backgroundColor: '#28a745' }}>Dispatch</button>
+                            <button onClick={() => handleCancel(challan.id)} className="btn btn-danger" style={{ backgroundColor: '#dc3545', color: 'white' }}>Cancel</button>
+                        </>
+                    )}
+                    <button onClick={() => window.print()} className="btn btn-secondary">Print</button>
                 </div>
             </div>
 

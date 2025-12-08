@@ -89,8 +89,9 @@ export default function CreateDeliveryChallanPage() {
             });
 
             if (res.ok) {
-                alert('Delivery Challan Created!');
-                router.push('/dashboard/delivery-challans');
+                const result = await res.json();
+                alert('Delivery Challan Draft Saved!');
+                router.push(`/dashboard/delivery-challans/${result.id}`);
             } else {
                 const err = await res.json();
                 alert(`Error: ${err.message}`);
@@ -112,6 +113,9 @@ export default function CreateDeliveryChallanPage() {
                         <select value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
                             <option value="SO">Sales Order</option>
                             <option value="TRANSFER">Stock Transfer</option>
+                            <option value="SERVICE">Service</option>
+                            <option value="SAMPLE">Sample</option>
+                            <option value="OTHER">Other</option>
                         </select>
                     </label>
 
@@ -187,7 +191,7 @@ export default function CreateDeliveryChallanPage() {
                 <button type="button" onClick={addItem}>Add Item</button>
 
                 <div className={styles.actions}>
-                    <button type="submit" className="btn btn-primary">Create Challan</button>
+                    <button type="submit" className="btn btn-primary" style={{ backgroundColor: '#6c757d' }}>Save as Draft</button>
                 </div>
 
             </form>

@@ -15,6 +15,11 @@ export class SalesInvoiceController {
         return this.invoiceService.create(createDto, req.user.id);
     }
 
+    @Post('from-delivery-challans')
+    createFromDCs(@Body('deliveryChallanIds') ids: number[], @Req() req: any) {
+        return this.invoiceService.createFromChallans(ids, req.user.id);
+    }
+
     @Get()
     findAll() {
         return this.invoiceService.findAll();

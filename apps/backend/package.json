@@ -93,6 +93,6 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "node --max-old-space-size=512 -r ts-node/register prisma/seed.ts"
   }
 }
