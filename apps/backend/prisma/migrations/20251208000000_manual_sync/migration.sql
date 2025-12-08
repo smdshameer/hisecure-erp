@@ -29,15 +29,8 @@ ALTER TABLE "SalesInvoiceItem" ADD COLUMN IF NOT EXISTS "taxRate" DECIMAL(65,30)
 -- AlterTable
 ALTER TABLE "SalesOrderItem" ADD COLUMN IF NOT EXISTS "taxRate" DECIMAL(65,30) NOT NULL DEFAULT 0;
 ALTER TABLE "SalesOrderItem" ADD COLUMN IF NOT EXISTS "dispatchedQty" INTEGER NOT NULL DEFAULT 0;
+-- Safely add orderedQty if missing
+ALTER TABLE "SalesOrderItem" ADD COLUMN IF NOT EXISTS "orderedQty" INTEGER NOT NULL DEFAULT 0;
 
 -- AlterTable
 ALTER TABLE "GRNItem" ADD COLUMN IF NOT EXISTS "taxRate" DECIMAL(65,30) NOT NULL DEFAULT 0;
-
--- Rename Column if it helps avoid data loss (though script uses orderedQty)
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'SalesOrderItem' AND column_name = 'quantity') THEN
-        ALTER TABLE "SalesOrderItem" RENAME COLUMN "quantity" TO "orderedQty";
-    END IF;
-END
-$$;

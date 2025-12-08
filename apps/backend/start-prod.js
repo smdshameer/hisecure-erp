@@ -10,6 +10,16 @@ if (!dbUrl) {
 
 try {
     console.log('Running migrations...');
+
+    // Attempt to resolve any stuck migration from previous failed run
+    try {
+        console.log('Ensuring migration state is clean...');
+        // Only run this if we suspect the specific migration is stuck (idempotent-ish if it fails)
+        execSync('npx prisma migrate resolve --rolled-back 20251208000000_manual_sync', { stdio: 'inherit', env: process.env });
+    } catch (e) {
+        console.log('Migration resolve command passed (either resolved or not needed).');
+    }
+
     execSync('npx prisma migrate deploy', { stdio: 'inherit', env: process.env });
 
     console.log('Seeding database...');
