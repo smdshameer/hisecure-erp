@@ -6,7 +6,7 @@ class SalesOrderItemDto {
     productId: number;
 
     @IsInt()
-    quantity: number;
+    orderedQty: number;
 
     @IsString()
     @IsOptional()
@@ -28,7 +28,8 @@ class SalesOrderItemDto {
     taxRate?: number;
 
     @IsNumber()
-    lineTotal: number;
+    @IsOptional()
+    lineTotal?: number;
 }
 
 export class CreateSalesOrderDto {

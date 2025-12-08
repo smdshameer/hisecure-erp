@@ -11,6 +11,10 @@ class GrnItemDto {
     @IsNumber()
     purchasePrice: number;
 
+    @IsNumber()
+    @IsOptional()
+    taxRate?: number;
+
     @IsString()
     @IsOptional()
     unit?: string;
