@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { SalesInvoiceService } from './sales-invoice.service';
 import { CreateSalesInvoiceDto } from './dto/create-sales-invoice.dto';
 import { UpdateSalesInvoiceDto } from './dto/update-sales-invoice.dto';
@@ -21,13 +21,42 @@ export class SalesInvoiceController {
     }
 
     @Get()
-    findAll() {
-        return this.invoiceService.findAll();
+    findAll(
+        @Query('dateFrom') dateFrom?: string,
+        @Query('dateTo') dateTo?: string,
+        @Query('customerId') customerId?: string,
+        @Query('status') status?: string,
+        @Query('page') page?: string,
+        @Query('pageSize') pageSize?: string,
+    ) {
+        return this.invoiceService.findAll({
+            dateFrom,
+            dateTo,
+            customerId: customerId ? Number(customerId) : undefined,
+            status,
+            page: page ? Number(page) : 1,
+            pageSize: pageSize ? Number(pageSize) : 50,
+        });
     }
 
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.invoiceService.findOne(+id);
+    }
+
+    @Get(':id/print')
+    getPrintData(@Param('id') id: string) {
+        return this.invoiceService.getPrintData(+id);
+    }
+
+    @Post(':id/post')
+    post(@Param('id') id: string, @Req() req: any) {
+        return this.invoiceService.post(+id, req.user.id);
+    }
+
+    @Post(':id/cancel')
+    cancel(@Param('id') id: string, @Req() req: any) {
+        return this.invoiceService.cancel(+id, req.user.id);
     }
 
     @Patch(':id')

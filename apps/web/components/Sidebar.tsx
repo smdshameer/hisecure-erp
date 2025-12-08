@@ -25,6 +25,7 @@ const menuItems = [
     { name: 'Sales Invoices', path: '/dashboard/sales-invoices' },
     { name: 'Delivery Challans', path: '/dashboard/delivery-challans' },
     { name: 'Goods Receipt Notes', path: '/dashboard/grn' },
+    { name: 'Stock Ledger', path: '/dashboard/stock-ledger' },
     { name: 'Settings', path: '/dashboard/settings' },
     { name: 'Users', path: '/dashboard/users' },
 ];

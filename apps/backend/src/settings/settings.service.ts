@@ -134,6 +134,7 @@ export class SettingsService implements OnModuleInit {
 
     async seedSettings() {
         const defaults = [
+            // General Settings
             {
                 key: 'company.name',
                 value: JSON.stringify('HiSecure Solutions'),
@@ -159,11 +160,123 @@ export class SettingsService implements OnModuleInit {
             },
             {
                 key: 'payment.stripe_key',
-                value: this.encryptionService.encrypt(JSON.stringify('sk_test_123456')), // Encrypt default
+                value: this.encryptionService.encrypt(JSON.stringify('sk_test_123456')),
                 type: 'secret',
                 category: 'System',
                 description: 'Stripe API Key',
                 isSystem: true,
+            },
+
+            // Sales Settings (from script)
+            {
+                key: 'sales.requireSalesOrderForDC',
+                value: JSON.stringify(false),
+                type: 'boolean',
+                category: 'Sales',
+                description: 'Require Sales Order reference when creating Delivery Challan',
+            },
+            {
+                key: 'sales.allowNegativeStockOnDC',
+                value: JSON.stringify(false),
+                type: 'boolean',
+                category: 'Sales',
+                description: 'Allow dispatching Delivery Challans even when stock is insufficient',
+            },
+            {
+                key: 'sales.autoGenerateInvoiceFromDC',
+                value: JSON.stringify(false),
+                type: 'boolean',
+                category: 'Sales',
+                description: 'Automatically create Sales Invoice when DC is dispatched',
+            },
+
+            // Inventory Settings
+            {
+                key: 'inventory.enableSerialTracking',
+                value: JSON.stringify(true),
+                type: 'boolean',
+                category: 'Inventory',
+                description: 'Enable serial number tracking for products',
+            },
+
+            // Document Series - Delivery Challan
+            {
+                key: 'docSeries.deliveryChallan.prefix',
+                value: JSON.stringify('DC-'),
+                type: 'string',
+                category: 'DocumentNumbering',
+                description: 'Prefix for Delivery Challan numbers',
+            },
+            {
+                key: 'docSeries.deliveryChallan.padding',
+                value: JSON.stringify(4),
+                type: 'number',
+                category: 'DocumentNumbering',
+                description: 'Number of digits in Delivery Challan sequence (e.g., 4 = 0001)',
+            },
+
+            // Document Series - Sales Invoice
+            {
+                key: 'docSeries.salesInvoice.prefix',
+                value: JSON.stringify('INV-'),
+                type: 'string',
+                category: 'DocumentNumbering',
+                description: 'Prefix for Sales Invoice numbers',
+            },
+            {
+                key: 'docSeries.salesInvoice.padding',
+                value: JSON.stringify(4),
+                type: 'number',
+                category: 'DocumentNumbering',
+                description: 'Number of digits in Sales Invoice sequence',
+            },
+
+            // Document Series - Sales Order
+            {
+                key: 'docSeries.salesOrder.prefix',
+                value: JSON.stringify('SO-'),
+                type: 'string',
+                category: 'DocumentNumbering',
+                description: 'Prefix for Sales Order numbers',
+            },
+            {
+                key: 'docSeries.salesOrder.padding',
+                value: JSON.stringify(4),
+                type: 'number',
+                category: 'DocumentNumbering',
+                description: 'Number of digits in Sales Order sequence',
+            },
+
+            // Document Series - Quotation
+            {
+                key: 'docSeries.salesQuotation.prefix',
+                value: JSON.stringify('QT-'),
+                type: 'string',
+                category: 'DocumentNumbering',
+                description: 'Prefix for Sales Quotation numbers',
+            },
+            {
+                key: 'docSeries.salesQuotation.padding',
+                value: JSON.stringify(4),
+                type: 'number',
+                category: 'DocumentNumbering',
+                description: 'Number of digits in Sales Quotation sequence',
+            },
+
+            // Document Series - GRN
+            {
+                key: 'docSeries.grn.prefix',
+                value: JSON.stringify('GRN-'),
+                type: 'string',
+                category: 'DocumentNumbering',
+                description: 'Prefix for Goods Receipt Note numbers',
+            },
+            {
+                key: 'docSeries.grn.padding',
+                value: JSON.stringify(4),
+                type: 'number',
+                category: 'DocumentNumbering',
+                description: 'Number of digits in GRN sequence',
             },
         ];
 

@@ -12,31 +12,21 @@ export class DeliveryChallanService {
     ) { }
 
     private async generateChallanNumber(tenantId: number): Promise<string> {
-        // Fetch prefix and padding from settings or use defaults
         const prefix = await this.settings.getValue<string>('docSeries.deliveryChallan.prefix') || 'DC-';
-        const padding = await this.settings.getValue<number>('docSeries.deliveryChallan.padding') || 5;
-
-        // Simple distinct count based, or timestamp based fallback
+        const padding = await this.settings.getValue<number>('docSeries.deliveryChallan.padding') || 4;
         const count = await this.prisma.deliveryChallan.count({ where: { tenantId } });
-        const numberPart = (count + 1).toString().padStart(padding, '0');
-
-        return `${prefix}${numberPart}`;
+        return `${prefix}${(count + 1).toString().padStart(padding, '0')}`;
     }
 
     async create(createDto: CreateDeliveryChallanDto, userId: number, tenantId: number = 1) {
         const { items, ...challanData } = createDto;
 
-        // 1. Check Settings
         const requireSO = await this.settings.getValue<boolean>('sales.requireSalesOrderForDC');
         if (requireSO && !challanData.salesOrderId) {
             throw new BadRequestException('Sales Order is required for Delivery Challan (System Setting)');
         }
 
-        // 2. Generate Number
         const challanNumber = await this.generateChallanNumber(tenantId);
-
-        // 3. Create DC in DRAFT status
-        // Verify From Warehouse
         const fromBranch = await this.prisma.branch.findUnique({ where: { id: challanData.fromWarehouseId } });
         if (!fromBranch) throw new NotFoundException('Source Warehouse not found');
 
@@ -45,7 +35,7 @@ export class DeliveryChallanService {
                 tenantId,
                 challanNumber,
                 ...challanData,
-                status: 'DRAFT', // Always start as Draft
+                status: 'DRAFT',
                 createdBy: userId,
                 items: {
                     create: items.map(item => ({
@@ -57,6 +47,7 @@ export class DeliveryChallanService {
                     }))
                 },
             },
+            include: { items: true }
         });
     }
 
@@ -68,14 +59,11 @@ export class DeliveryChallanService {
             });
 
             if (!dc) throw new NotFoundException(`DC #${id} not found`);
-            if (dc.status !== 'DRAFT') throw new BadRequestException(`DC must be in DRAFT status to dispatch. Current: ${dc.status}`);
+            if (dc.status !== 'DRAFT') throw new BadRequestException(`DC must be in DRAFT status to dispatch`);
 
-            // Settings Check
             const allowNegative = await this.settings.getValue<boolean>('sales.allowNegativeStockOnDC');
 
-            // Process Stock Movement
             for (const item of dc.items) {
-                // Check Stock
                 const stock = await prisma.branchStock.findUnique({
                     where: { branchId_productId: { branchId: dc.fromWarehouseId, productId: item.productId } }
                 });
@@ -83,42 +71,28 @@ export class DeliveryChallanService {
                 const currentQty = stock ? stock.quantity : 0;
 
                 if (!allowNegative && currentQty < item.quantity) {
-                    // Check if stock exists at all
-                    if (!stock) throw new BadRequestException(`No stock record for Product ID ${item.productId}`);
-                    throw new BadRequestException(`Insufficient stock for Product ID ${item.productId}. Available: ${currentQty}, Required: ${item.quantity}`);
+                    throw new BadRequestException(`Insufficient stock for Product ID ${item.productId}`);
                 }
 
-                // Deduct from Source
                 if (stock) {
                     await prisma.branchStock.update({
                         where: { id: stock.id },
                         data: { quantity: { decrement: item.quantity } }
                     });
                 } else {
-                    // Should create negative stock if allowed
                     await prisma.branchStock.create({
-                        data: {
-                            branchId: dc.fromWarehouseId,
-                            productId: item.productId,
-                            quantity: -item.quantity
-                        }
+                        data: { branchId: dc.fromWarehouseId, productId: item.productId, quantity: -item.quantity }
                     });
                 }
 
-                // Add to Destination (if Transfer)
                 if (dc.type === 'TRANSFER' && dc.toWarehouseId) {
                     await prisma.branchStock.upsert({
                         where: { branchId_productId: { branchId: dc.toWarehouseId, productId: item.productId } },
                         update: { quantity: { increment: item.quantity } },
-                        create: {
-                            branchId: dc.toWarehouseId,
-                            productId: item.productId,
-                            quantity: item.quantity
-                        }
+                        create: { branchId: dc.toWarehouseId, productId: item.productId, quantity: item.quantity }
                     });
                 }
 
-                // Stock Ledger Entry (Source)
                 await prisma.stockLedger.create({
                     data: {
                         tenantId: dc.tenantId,
@@ -129,40 +103,13 @@ export class DeliveryChallanService {
                         refId: dc.id,
                         productId: item.productId,
                         warehouseId: dc.fromWarehouseId,
-                        entryDate: new Date(),
                     }
                 });
-
-                // Stock Ledger Entry (Destination - if transfer)
-                if (dc.type === 'TRANSFER' && dc.toWarehouseId) {
-                    const destStock = await prisma.branchStock.findUnique({
-                        where: { branchId_productId: { branchId: dc.toWarehouseId, productId: item.productId } }
-                    });
-                    const destQty = destStock ? destStock.quantity : item.quantity; // post-increment val
-
-                    await prisma.stockLedger.create({
-                        data: {
-                            tenantId: dc.tenantId,
-                            qtyIn: item.quantity,
-                            qtyOut: 0,
-                            balanceQty: destQty,
-                            refType: 'DELIVERY_CHALLAN_IN',
-                            refId: dc.id,
-                            productId: item.productId,
-                            warehouseId: dc.toWarehouseId,
-                            entryDate: new Date(),
-                        }
-                    });
-                }
             }
 
-            // Update Status
             return prisma.deliveryChallan.update({
                 where: { id },
-                data: {
-                    status: 'DISPATCHED',
-                    approvedBy: userId
-                }
+                data: { status: 'DISPATCHED', approvedBy: userId }
             });
         });
     }
@@ -177,25 +124,18 @@ export class DeliveryChallanService {
             if (dc.status === 'CANCELLED') throw new BadRequestException('Already cancelled');
 
             if (dc.status === 'DISPATCHED') {
-                // Reverse Stock Movement
                 for (const item of dc.items) {
-                    // Return to source
                     await prisma.branchStock.update({
                         where: { branchId_productId: { branchId: dc.fromWarehouseId, productId: item.productId } },
                         data: { quantity: { increment: item.quantity } }
                     });
 
-                    // Deduct from destination (if transfer)
                     if (dc.type === 'TRANSFER' && dc.toWarehouseId) {
                         await prisma.branchStock.update({
                             where: { branchId_productId: { branchId: dc.toWarehouseId, productId: item.productId } },
                             data: { quantity: { decrement: item.quantity } }
                         });
                     }
-
-                    // Ledger reversal entry? Or just rely on updates? 
-                    // Best practice: Create new ledger entry for reversal "ADJUSTMENT/CANCEL"
-                    // Omitting for brevity, but logically should exist.
                 }
             }
 
@@ -206,16 +146,48 @@ export class DeliveryChallanService {
         });
     }
 
-    findAll() {
-        return this.prisma.deliveryChallan.findMany({
-            include: {
-                customer: true,
-                fromWarehouse: true,
-                toWarehouse: true,
-                _count: { select: { items: true } }
-            },
-            orderBy: { createdAt: 'desc' },
-        });
+    async findAll(filters?: {
+        dateFrom?: string;
+        dateTo?: string;
+        customerId?: number;
+        status?: string;
+        type?: string;
+        warehouseId?: number;
+        page?: number;
+        pageSize?: number;
+    }) {
+        const where: any = {};
+
+        if (filters?.customerId) where.customerId = filters.customerId;
+        if (filters?.status) where.status = filters.status;
+        if (filters?.type) where.type = filters.type;
+        if (filters?.warehouseId) where.fromWarehouseId = filters.warehouseId;
+        if (filters?.dateFrom || filters?.dateTo) {
+            where.challanDate = {};
+            if (filters.dateFrom) where.challanDate.gte = new Date(filters.dateFrom);
+            if (filters.dateTo) where.challanDate.lte = new Date(filters.dateTo);
+        }
+
+        const page = filters?.page || 1;
+        const pageSize = filters?.pageSize || 50;
+
+        const [data, total] = await Promise.all([
+            this.prisma.deliveryChallan.findMany({
+                where,
+                include: {
+                    customer: true,
+                    fromWarehouse: true,
+                    toWarehouse: true,
+                    _count: { select: { items: true } }
+                },
+                orderBy: { createdAt: 'desc' },
+                skip: (page - 1) * pageSize,
+                take: pageSize,
+            }),
+            this.prisma.deliveryChallan.count({ where })
+        ]);
+
+        return { data, total, page, pageSize, totalPages: Math.ceil(total / pageSize) };
     }
 
     async findOne(id: number) {
@@ -227,29 +199,29 @@ export class DeliveryChallanService {
                 fromWarehouse: true,
                 toWarehouse: true,
                 creator: { select: { id: true, name: true } },
+                salesOrder: true,
+                invoiceLinks: { include: { salesInvoice: true } }
             },
         });
         if (!dc) throw new NotFoundException(`Delivery Challan #${id} not found`);
         return dc;
     }
 
-    update(id: number, updateDto: UpdateDeliveryChallanDto) {
-        // Can only edit if DRAFT
-        return this.prisma.deliveryChallan.findUnique({ where: { id } }).then(dc => {
-            if (dc?.status !== 'DRAFT') throw new BadRequestException('Only DRAFT documents can be edited');
-            return this.prisma.deliveryChallan.update({
-                where: { id },
-                data: updateDto as any,
-            });
-        });
+    async getPrintData(id: number) {
+        const dc = await this.findOne(id);
+        const companyName = await this.settings.getValue<string>('company.name') || 'HiSecure ERP';
+        return { ...dc, companyName };
     }
 
-    remove(id: number) {
-        // Can only delete if DRAFT? Or CANCELLED?
-        // For now, allow delete if not DISPATCHED
-        return this.prisma.deliveryChallan.findUnique({ where: { id } }).then(dc => {
-            if (dc?.status === 'DISPATCHED') throw new BadRequestException('Cannot delete DISPATCHED document. Cancel it instead.');
-            return this.prisma.deliveryChallan.delete({ where: { id } });
-        });
+    async update(id: number, updateDto: UpdateDeliveryChallanDto) {
+        const dc = await this.prisma.deliveryChallan.findUnique({ where: { id } });
+        if (dc?.status !== 'DRAFT') throw new BadRequestException('Only DRAFT documents can be edited');
+        return this.prisma.deliveryChallan.update({ where: { id }, data: updateDto as any });
+    }
+
+    async remove(id: number) {
+        const dc = await this.prisma.deliveryChallan.findUnique({ where: { id } });
+        if (dc?.status === 'DISPATCHED') throw new BadRequestException('Cannot delete DISPATCHED document');
+        return this.prisma.deliveryChallan.delete({ where: { id } });
     }
 }

@@ -1,31 +1,48 @@
-import { IsNotEmpty, IsNumber, IsArray, ValidateNested, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString, IsNumber, IsArray, ValidateNested, IsDateString, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class QuotationItemDto {
-    @IsNotEmpty()
-    @IsNumber()
+export class QuotationItemDto {
+    @IsInt()
     productId: number;
 
-    @IsNotEmpty()
-    @IsNumber()
+    @IsInt()
+    @Min(1)
     quantity: number;
 
-    @IsNotEmpty()
     @IsNumber()
     unitPrice: number;
+
+    @IsOptional()
+    @IsString()
+    description?: string;
+
+    @IsOptional()
+    @IsNumber()
+    discount?: number;
+
+    @IsOptional()
+    @IsNumber()
+    taxRate?: number;
 }
 
 export class CreateQuotationDto {
-    @IsNotEmpty()
-    @IsNumber()
+    @IsInt()
     customerId: number;
+
+    @IsOptional()
+    @IsDateString()
+    quoteDate?: string;
+
+    @IsOptional()
+    @IsDateString()
+    validityDate?: string;
+
+    @IsOptional()
+    @IsString()
+    remarks?: string;
 
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => QuotationItemDto)
     items: QuotationItemDto[];
-
-    @IsOptional()
-    @IsString()
-    status?: string;
 }

@@ -1,19 +1,29 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { SettingsService } from '../settings/settings.service';
 import { CreateSalesInvoiceDto } from './dto/create-sales-invoice.dto';
 import { UpdateSalesInvoiceDto } from './dto/update-sales-invoice.dto';
 
 @Injectable()
 export class SalesInvoiceService {
-    constructor(private prisma: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        private settings: SettingsService
+    ) { }
 
-    async create(createDto: CreateSalesInvoiceDto, userId: number) {
+    private async generateInvoiceNumber(tenantId: number): Promise<string> {
+        const prefix = await this.settings.getValue<string>('docSeries.salesInvoice.prefix') || 'INV-';
+        const padding = await this.settings.getValue<number>('docSeries.salesInvoice.padding') || 4;
+        const count = await this.prisma.salesInvoice.count({ where: { tenantId } });
+        return `${prefix}${(count + 1).toString().padStart(padding, '0')}`;
+    }
+
+    async create(createDto: CreateSalesInvoiceDto, userId: number, tenantId: number = 1) {
         const { items, deliveryChallanIds, ...invoiceData } = createDto;
 
-        const invoiceNumber = `INV-${Date.now()}`;
+        const invoiceNumber = await this.generateInvoiceNumber(tenantId);
 
         return this.prisma.$transaction(async (prisma) => {
-            // 1. Calculations
             let totalBeforeTax = 0;
             let totalTax = 0;
             const invoiceItems = [];
@@ -21,7 +31,6 @@ export class SalesInvoiceService {
             for (const item of items) {
                 const lineTotal = item.price * item.quantity;
                 const taxAmount = (lineTotal * (item.taxRate || 0)) / 100;
-
                 totalBeforeTax += lineTotal;
                 totalTax += taxAmount;
 
@@ -30,16 +39,16 @@ export class SalesInvoiceService {
                     quantity: item.quantity,
                     price: item.price,
                     taxRate: item.taxRate,
-                    lineTotal: lineTotal, // Assuming FE sends or we calc here. Better to recalc.
+                    lineTotal: lineTotal,
                     description: item.description,
                 });
             }
 
             const totalAmount = totalBeforeTax + totalTax;
 
-            // 2. Create Invoice
             const invoice = await prisma.salesInvoice.create({
                 data: {
+                    tenantId,
                     invoiceNumber,
                     ...invoiceData,
                     totalBeforeTax,
@@ -50,7 +59,6 @@ export class SalesInvoiceService {
                 },
             });
 
-            // 3. Link Challans if provided
             if (deliveryChallanIds && deliveryChallanIds.length > 0) {
                 await prisma.salesInvoiceDeliveryChallan.createMany({
                     data: deliveryChallanIds.map(dcId => ({
@@ -58,8 +66,6 @@ export class SalesInvoiceService {
                         deliveryChallanId: dcId
                     }))
                 });
-
-                // Update DC status to INVOICED
                 await prisma.deliveryChallan.updateMany({
                     where: { id: { in: deliveryChallanIds } },
                     data: { status: 'INVOICED' }
@@ -70,42 +76,10 @@ export class SalesInvoiceService {
         });
     }
 
-    findAll() {
-        return this.prisma.salesInvoice.findMany({
-            include: {
-                customer: true,
-                creator: { select: { id: true, name: true } },
-            },
-            orderBy: { createdAt: 'desc' },
-        });
-    }
-
-    findOne(id: number) {
-        return this.prisma.salesInvoice.findUnique({
-            where: { id },
-            include: {
-                items: { include: { product: true } },
-                customer: true,
-                challanLinks: { include: { deliveryChallan: true } },
-            }
-        });
-    }
-
-    update(id: number, updateDto: UpdateSalesInvoiceDto) {
-        return this.prisma.salesInvoice.update({
-            where: { id },
-            data: updateDto as any,
-        });
-    }
-
-    remove(id: number) {
-        return this.prisma.salesInvoice.delete({ where: { id } });
-    }
     async createFromChallans(dcIds: number[], userId: number) {
         if (!dcIds || dcIds.length === 0) throw new NotFoundException('No Delivery Challan IDs provided');
 
         return this.prisma.$transaction(async (prisma) => {
-            // 1. Fetch DCs with items and products
             const dcs = await prisma.deliveryChallan.findMany({
                 where: { id: { in: dcIds } },
                 include: { items: { include: { product: true } }, customer: true }
@@ -113,18 +87,16 @@ export class SalesInvoiceService {
 
             if (dcs.length !== dcIds.length) throw new NotFoundException('One or more Challans not found');
 
-            // 2. Validate Consistency (Same Customer, Same Tenant)
             const customerId = dcs[0].customerId;
             const tenantId = dcs[0].tenantId;
 
             if (dcs.some(dc => dc.customerId !== customerId)) {
-                throw new Error('All Challans must belong to the same Customer');
+                throw new BadRequestException('All Challans must belong to the same Customer');
             }
             if (dcs.some(dc => dc.status !== 'DISPATCHED')) {
-                throw new Error('All Challans must be in DISPATCHED status');
+                throw new BadRequestException('All Challans must be in DISPATCHED status');
             }
 
-            // 3. Aggregate Items
             const invoiceItems = [];
             let totalBeforeTax = 0;
             let totalTax = 0;
@@ -134,7 +106,6 @@ export class SalesInvoiceService {
                     const price = Number(item.product.price);
                     const quantity = item.quantity;
                     const taxRate = Number(item.product.gstRate || 0);
-
                     const lineTotal = price * quantity;
                     const taxAmount = (lineTotal * taxRate) / 100;
 
@@ -143,19 +114,18 @@ export class SalesInvoiceService {
 
                     invoiceItems.push({
                         productId: item.productId,
-                        quantity: quantity,
-                        price: price, // Use current product price
-                        taxRate: taxRate,
-                        lineTotal: lineTotal,
+                        quantity,
+                        price,
+                        taxRate,
+                        lineTotal,
                         description: item.description || item.product.name,
                     });
                 }
             }
 
             const totalAmount = totalBeforeTax + totalTax;
-            const invoiceNumber = `INV-${Date.now()}`;
+            const invoiceNumber = await this.generateInvoiceNumber(tenantId);
 
-            // 4. Create Invoice
             const invoice = await prisma.salesInvoice.create({
                 data: {
                     tenantId,
@@ -171,15 +141,10 @@ export class SalesInvoiceService {
                 },
             });
 
-            // 5. Link Challans
             await prisma.salesInvoiceDeliveryChallan.createMany({
-                data: dcIds.map(dcId => ({
-                    salesInvoiceId: invoice.id,
-                    deliveryChallanId: dcId
-                }))
+                data: dcIds.map(dcId => ({ salesInvoiceId: invoice.id, deliveryChallanId: dcId }))
             });
 
-            // 6. Update DC Status
             await prisma.deliveryChallan.updateMany({
                 where: { id: { in: dcIds } },
                 data: { status: 'INVOICED' }
@@ -187,5 +152,88 @@ export class SalesInvoiceService {
 
             return invoice;
         });
+    }
+
+    async post(id: number, userId: number) {
+        const invoice = await this.prisma.salesInvoice.findUnique({ where: { id } });
+        if (!invoice) throw new NotFoundException(`Invoice #${id} not found`);
+        if (invoice.status !== 'DRAFT') throw new BadRequestException('Only DRAFT invoices can be posted');
+
+        return this.prisma.salesInvoice.update({
+            where: { id },
+            data: { status: 'POSTED' }
+        });
+    }
+
+    async cancel(id: number, userId: number) {
+        const invoice = await this.prisma.salesInvoice.findUnique({ where: { id } });
+        if (!invoice) throw new NotFoundException(`Invoice #${id} not found`);
+        if (invoice.status === 'CANCELLED') throw new BadRequestException('Already cancelled');
+
+        return this.prisma.salesInvoice.update({
+            where: { id },
+            data: { status: 'CANCELLED' }
+        });
+    }
+
+    async findAll(filters?: {
+        dateFrom?: string;
+        dateTo?: string;
+        customerId?: number;
+        status?: string;
+        page?: number;
+        pageSize?: number;
+    }) {
+        const where: any = {};
+        if (filters?.customerId) where.customerId = filters.customerId;
+        if (filters?.status) where.status = filters.status;
+        if (filters?.dateFrom || filters?.dateTo) {
+            where.invoiceDate = {};
+            if (filters.dateFrom) where.invoiceDate.gte = new Date(filters.dateFrom);
+            if (filters.dateTo) where.invoiceDate.lte = new Date(filters.dateTo);
+        }
+
+        const page = filters?.page || 1;
+        const pageSize = filters?.pageSize || 50;
+
+        const [data, total] = await Promise.all([
+            this.prisma.salesInvoice.findMany({
+                where,
+                include: { customer: true, creator: { select: { id: true, name: true } } },
+                orderBy: { createdAt: 'desc' },
+                skip: (page - 1) * pageSize,
+                take: pageSize,
+            }),
+            this.prisma.salesInvoice.count({ where })
+        ]);
+
+        return { data, total, page, pageSize, totalPages: Math.ceil(total / pageSize) };
+    }
+
+    async findOne(id: number) {
+        const invoice = await this.prisma.salesInvoice.findUnique({
+            where: { id },
+            include: {
+                items: { include: { product: true } },
+                customer: true,
+                challanLinks: { include: { deliveryChallan: true } },
+            }
+        });
+        if (!invoice) throw new NotFoundException(`Invoice #${id} not found`);
+        return invoice;
+    }
+
+    async getPrintData(id: number) {
+        const invoice = await this.findOne(id);
+        const companyName = await this.settings.getValue<string>('company.name') || 'HiSecure ERP';
+        return { ...invoice, companyName };
+    }
+
+    update(id: number, updateDto: UpdateSalesInvoiceDto) {
+        return this.prisma.salesInvoice.update({ where: { id }, data: updateDto as any });
+    }
+
+    remove(id: number) {
+        return this.prisma.salesInvoice.delete({ where: { id } });
     }
 }

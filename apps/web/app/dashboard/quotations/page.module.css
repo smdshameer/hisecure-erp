@@ -56,9 +56,3 @@
 .table tr:hover {
     background: #f8f9fa;
 }
-
-.empty {
-    text-align: center;
-    padding: 2rem;
-    color: #888;
-}

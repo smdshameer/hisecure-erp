@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { DeliveryChallanService } from './delivery-challan.service';
 import { CreateDeliveryChallanDto } from './dto/create-delivery-challan.dto';
 import { UpdateDeliveryChallanDto } from './dto/update-delivery-challan.dto';
@@ -16,13 +16,36 @@ export class DeliveryChallanController {
     }
 
     @Get()
-    findAll() {
-        return this.dcService.findAll();
+    findAll(
+        @Query('dateFrom') dateFrom?: string,
+        @Query('dateTo') dateTo?: string,
+        @Query('customerId') customerId?: string,
+        @Query('status') status?: string,
+        @Query('type') type?: string,
+        @Query('warehouseId') warehouseId?: string,
+        @Query('page') page?: string,
+        @Query('pageSize') pageSize?: string,
+    ) {
+        return this.dcService.findAll({
+            dateFrom,
+            dateTo,
+            customerId: customerId ? Number(customerId) : undefined,
+            status,
+            type,
+            warehouseId: warehouseId ? Number(warehouseId) : undefined,
+            page: page ? Number(page) : 1,
+            pageSize: pageSize ? Number(pageSize) : 50,
+        });
     }
 
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.dcService.findOne(+id);
+    }
+
+    @Get(':id/print')
+    getPrintData(@Param('id') id: string) {
+        return this.dcService.getPrintData(+id);
     }
 
     @Patch(':id')
