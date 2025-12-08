@@ -1,3 +1,4 @@
+// Sidebar Component - Updated Dec 8 2025
 'use client';
 
 import Link from 'next/link';
