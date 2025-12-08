@@ -22,6 +22,8 @@ const menuItems = [
     { name: 'Branches', path: '/dashboard/branches' },
     { name: 'Transfers', path: '/dashboard/transfers' },
     { name: 'Reports', path: '/dashboard/reports' },
+    { name: 'Delivery Challans', path: '/dashboard/delivery-challans' },
+    { name: 'Goods Receipt Notes', path: '/dashboard/grn' },
     { name: 'Settings', path: '/dashboard/settings' },
     { name: 'Users', path: '/dashboard/users' },
 ];
